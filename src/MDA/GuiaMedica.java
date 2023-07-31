@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import otro.Constante;
 import util.SqlValorCombo;
@@ -26,15 +28,15 @@ public class GuiaMedica extends javax.swing.JDialog {
         this.dashboard = dashboard;
         this.codme = codme;
         this.username = username;
-        this.lista = SqlValorCombo.llenarComboPor("select os_id, CONCAT(os_cod,os_dig,os_scd) as oscodigo, os_nombre from obrassociales where factura = 'O'", this.cbOS, "os_nombre", connection);
+        this.lista = SqlValorCombo.llenarComboPor("select os_id, CONCAT(os_cod,os_dig,os_scd) as oscodigo, os_nombre from obrassociales where factura = 'O'", cbOS, "os_nombre", connection);
     }
 
     public void agregarGuiaMed(Connection connection) throws SQLException {
-        if(dashboard.codme > 0){
+        if(codme > 0){
             String osid = lista.get(cbOS.getSelectedIndex()).get(".os_id").toString();
         boolean accion;
         try {
-            String execSql = "exec agregar_guia_medica " + dashboard.codme + ", " + lista.get(cbOS.getSelectedIndex()).get(".os_id") + "";
+            String execSql = "exec agregar_guia_medica " + codme + ", " + lista.get(cbOS.getSelectedIndex()).get(".os_id") + "";
             connection.createStatement().execute(execSql);
             accion = true;
         }
@@ -151,7 +153,9 @@ public class GuiaMedica extends javax.swing.JDialog {
         try {
             agregarGuiaMed(connection);
         }
-        catch (Exception ex) {}
+        catch (SQLException ex) {
+            Logger.getLogger(GuiaMedica.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
 
