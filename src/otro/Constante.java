@@ -33,5 +33,6 @@ public class Constante
     public static String PERMISO_MDA_CMT = "permiso.mda.cmt";
     public static String PERMISO_OS_CMT = "permiso.os.cmt";
     public static String PERMISO_ADMINISTRADOR_CMT = "permiso.administrador.cmt";
+    public static String PERMISO_FALTANTES_IPSST = "permiso.faltantes.ipsst";
     public static String PERMISO_DELEGACION = "permiso.delegacion";
 }

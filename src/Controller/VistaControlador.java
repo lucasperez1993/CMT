@@ -13,6 +13,7 @@ import MDA.DialogoEspecialidad;
 import MDA.Excel;
 import MDA.FueraDeTermino;
 import MDA.GuiaMedica;
+import OS.DialogoFaltantes;
 import java.sql.Connection;
 import java.text.ParseException;
 import objeto.Cargador;
@@ -88,5 +89,10 @@ public class VistaControlador {
     public void vistaDashboardOS(JSONObject permisoJson, Connection connection){
         DashboardOS dashboardOS = new DashboardOS(permisoJson, connection);
         dashboardOS.setVisible(true);
+    }
+    
+    public void vistaFaltantesIPSST(java.awt.Frame parent, boolean b, Connection connection){
+        DialogoFaltantes dialogoFaltantes = new DialogoFaltantes(parent, b, connection);
+        dialogoFaltantes.setVisible(true);
     }
 }

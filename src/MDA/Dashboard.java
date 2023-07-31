@@ -88,7 +88,6 @@ public class Dashboard extends javax.swing.JFrame {
         btnSendIPSST.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_ENVIAR_MAIL_IPSST, connection));
         btnControl.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_CONTROL_TODOS, connection));
         btnConsulta.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_CREAR_CONSULTA, connection));
-        itemGuiamed.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_AGREGAR_GUIAMED_CMT, connection));
     }
 
     public void estaBloqueado() throws SQLException {
@@ -164,6 +163,7 @@ public class Dashboard extends javax.swing.JFrame {
                 txtMatricula.setText(objetoCargador.matricula);
                 txtClaveCMT.setText(objetoCargador.claveGestion);
                 txtClaveIPSST.setText(objetoCargador.claveIpsst);
+                itemGuiamed.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_AGREGAR_GUIAMED_CMT, connection));
                 btnSendCMT.setVisible(true);
                 datosDelegado();
             } else {
@@ -896,6 +896,7 @@ public class Dashboard extends javax.swing.JFrame {
         btnDesbloquear.hide();
         btnAlta.hide();
         btnEstado.hide();
+        itemGuiamed.setEnabled(false);
         //btnCorreo.setEnabled(false);
     }//GEN-LAST:event_btnBorrarActionPerformed
 
