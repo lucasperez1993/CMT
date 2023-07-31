@@ -111,11 +111,17 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="MESA DE AYUDA"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnMDAActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnOS">
           <Properties>
             <Property name="text" type="java.lang.String" value="OBRAS SOCIALES"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnOSActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

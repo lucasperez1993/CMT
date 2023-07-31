@@ -2,7 +2,6 @@ package Login;
 
 import Conexion.Conexion;
 import Controller.VistaControlador;
-import MDA.Dashboard;
 import com.microsoft.sqlserver.jdbc.SQLServerException;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -16,7 +15,6 @@ import objeto.jdb_permiso;
 import org.json.JSONException;
 import org.json.JSONObject;
 import otro.Constante;
-
 /**
  *
  * @author lperez
@@ -29,7 +27,6 @@ public class Login extends javax.swing.JFrame {
     public static int tipo;
     public static String permisoJson;
     VistaControlador controlador = new VistaControlador();
-    
     
     public Login() {
         final Conexion conn = new Conexion();

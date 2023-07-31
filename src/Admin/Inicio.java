@@ -4,6 +4,10 @@ import Controller.VistaControlador;
 import Login.Login;
 import MDA.Dashboard;
 import java.sql.Connection;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 /**
  *
@@ -12,11 +16,12 @@ import org.json.JSONObject;
 public class Inicio extends javax.swing.JFrame {
     Login login;
     Connection connection;
-    VistaControlador controlador;
+    VistaControlador controlador = new VistaControlador();
     Dashboard dashboard;
     public JSONObject permisoJson;
     
     public Inicio(JSONObject permisoJson, Login login, Connection connection) {
+        VistaControlador controlador = new VistaControlador();
         this.connection = connection;
         this.login = login;
         this.permisoJson = permisoJson;
@@ -44,8 +49,18 @@ public class Inicio extends javax.swing.JFrame {
         lblUser.setForeground(new java.awt.Color(0, 153, 255));
 
         btnMDA.setText("MESA DE AYUDA");
+        btnMDA.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMDAActionPerformed(evt);
+            }
+        });
 
         btnOS.setText("OBRAS SOCIALES");
+        btnOS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOSActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -111,6 +126,20 @@ public class Inicio extends javax.swing.JFrame {
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnMDAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMDAActionPerformed
+        try {
+            controlador.vistaDashboard(this.permisoJson);
+        } catch (JSONException ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnMDAActionPerformed
+
+    private void btnOSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSActionPerformed
+        controlador.vistaDashboardOS(this.permisoJson, connection);
+    }//GEN-LAST:event_btnOSActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnMDA;
