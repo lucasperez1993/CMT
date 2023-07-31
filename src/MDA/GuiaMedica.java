@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
-import static javax.swing.UIManager.get;
 import otro.Constante;
 import util.SqlValorCombo;
 /**

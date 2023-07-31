@@ -1,10 +1,8 @@
 package MDA;
 
-import MDA.Dashboard;
 import java.sql.Connection;
 import java.sql.SQLException;
 import objeto.Cargador;
-
 /**
  *
  * @author lperez

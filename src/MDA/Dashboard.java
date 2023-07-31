@@ -9,8 +9,6 @@ import Models.SqlMesaDeAyuda;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -266,7 +264,7 @@ public class Dashboard extends javax.swing.JFrame {
         switch (tsocio) {
             case 1: {
                 estado = "ACTIVO";
-                btnEstado.setBackground(new java.awt.Color(0, 255, 0));
+                btnEstado.setBackground(new java.awt.Color(0,153,0));
                 btnEstado.setForeground(new java.awt.Color(255, 255, 255));
                 btnEstado.setText(estado);
                 btnEstado.setVisible(true);
@@ -482,7 +480,7 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        btnEstado.setBackground(new java.awt.Color(0, 0, 0));
+        btnEstado.setBackground(new java.awt.Color(0, 153, 0));
         btnEstado.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);

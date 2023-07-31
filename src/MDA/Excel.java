@@ -1,7 +1,3 @@
-// 
-// Decompiled by Procyon v0.5.36
-// 
-
 package MDA;
 
 import Conexion.Conexion;
@@ -23,13 +19,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 public class Excel
 {
-    public void cargarXLS(final DialogoControl dialogo, final String fileName) throws SQLException, IOException {
+    public void cargarXLS(DialogoControl dialogo, String fileName) throws SQLException, IOException {
         Workbook book = (Workbook)new HSSFWorkbook();
         Sheet sheet = book.createSheet("Consulta");
         String[] cabecera = { "CODIGO", "N° Socio / Cargador", "Nombre", "Motivo", "Solución", "Medio", "Obra Social / Sistema", "Observaciones", "Fecha Inicio", "Fecha Fin" };
         Row filaEncabezado = sheet.createRow(0);
         for (int i = 0; i < cabecera.length; ++i) {
-            final Cell celdaEncabezado = filaEncabezado.createCell(i);
+            Cell celdaEncabezado = filaEncabezado.createCell(i);
             celdaEncabezado.setCellValue(cabecera[i]);
         }
         Conexion con = new Conexion();
@@ -39,9 +35,9 @@ public class Excel
         ResultSet rs = ps.executeQuery();
         int numCol = rs.getMetaData().getColumnCount();
         while (rs.next()) {
-            final Row filaDatos = sheet.createRow(numfilaDatos);
+            Row filaDatos = sheet.createRow(numfilaDatos);
             for (int j = 0; j < numCol; ++j) {
-                final Cell celdaDatos = filaDatos.createCell(j);
+                Cell celdaDatos = filaDatos.createCell(j);
                 celdaDatos.setCellValue(rs.getString(j + 1));
             }
             ++numfilaDatos;
@@ -57,7 +53,7 @@ public class Excel
         sheet.autoSizeColumn(8);
         sheet.autoSizeColumn(9);
         sheet.autoSizeColumn(10);
-        try (final FileOutputStream fileOut = new FileOutputStream("C:\\Mesa de Ayuda\\" + fileName + ".xls")) {
+        try (FileOutputStream fileOut = new FileOutputStream("C:\\Mesa de Ayuda\\" + fileName + ".xls")) {
             book.write((OutputStream)fileOut);
         }
         catch (FileNotFoundException ex) {

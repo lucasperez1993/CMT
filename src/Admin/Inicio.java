@@ -4,10 +4,6 @@ import Controller.VistaControlador;
 import Login.Login;
 import MDA.Dashboard;
 import java.sql.Connection;
-import java.text.ParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.json.JSONException;
 import org.json.JSONObject;
 /**
  *
@@ -19,7 +15,6 @@ public class Inicio extends javax.swing.JFrame {
     VistaControlador controlador;
     Dashboard dashboard;
     public JSONObject permisoJson;
-    
     
     public Inicio(JSONObject permisoJson, Login login, Connection connection) {
         this.connection = connection;

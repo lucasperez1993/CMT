@@ -13,7 +13,6 @@ import javax.swing.JOptionPane;
 import objeto.cmt_presentacion_ftermino;
 import util.Reflection;
 import util.SqlValorCombo;
-
 /**
  *
  * @author lperez
@@ -169,13 +168,14 @@ public class FueraDeTermino extends javax.swing.JDialog {
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbAtiende)
-                    .addComponent(rbNoAtiende)
-                    .addComponent(rbSinServicio)
-                    .addComponent(rbWP)
-                    .addComponent(cbMotivos)
-                    .addComponent(btnGrabar))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(cbMotivos, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(rbAtiende)
+                        .addComponent(rbNoAtiende)
+                        .addComponent(rbSinServicio)
+                        .addComponent(rbWP)
+                        .addComponent(btnGrabar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 212, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())

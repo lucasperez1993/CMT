@@ -11,7 +11,6 @@ import objeto.cmt_configuracion;
 import org.json.JSONObject;
 import util.CallService;
 import util.MD5;
-
 /**
  *
  * @author lperez
