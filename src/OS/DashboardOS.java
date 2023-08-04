@@ -56,66 +56,52 @@ public class DashboardOS extends javax.swing.JFrame {
     }
 
     public void cargarDatosPorCodme() throws SQLException, JSONException, ParseException, Exception {
-        if (txtCodme.equals("")) {
-            txtMatricula.requestFocus();
-        } else {
-            codme = Integer.parseInt(txtCodme.getText());
-            String sql = "SELECT codme, matric, gannro, nombre, FORMAT(fchnac, 'dd/MM/yyyy') as fechan, tecel, mail "
-                    + "FROM prestadores WHERE codme <= 75000 AND entidad = 0 and tsocio <= 4 and codme = ?";
-            ArrayList array = new ArrayList();
-            array.add(codme);
-            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, array, connection);
-            if (lista.size() > 0) {
-                txtMatricula.setText(lista.get(0).get(".matric").toString().trim());
-                txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
-                txtCUIL.setText(lista.get(0).get(".gannro").toString().trim().replaceAll("-", ""));
-                txtFecha.setText(lista.get(0).get(".fechan").toString().trim());
-                txtCel.setText(lista.get(0).get(".tecel").toString().trim());
-                txtMail.setText(lista.get(0).get(".mail").toString().trim());
-                btnFaltantes.setEnabled(jdb_permiso.getPermisoPorDelegacion(this.permisoJson, Constante.PERMISO_FALTANTES_IPSST, connection));
-                getEspecialidad(codme);
-            }else{
-                JOptionPane.showMessageDialog(null, "No existe el socio.", "Mensaje del Sistema", 0);
-                borrarDatos();
-            }
+        codme = Integer.parseInt(txtCodme.getText());
+        String sql = "SELECT codme, matric, gannro, nombre, CONVERT(DATE, fchnac) as fechan, tecel, mail "
+                + "FROM prestadores WHERE codme <= 75000 AND entidad = 0 and tsocio <= 4 and codme = ?";
+        ArrayList array = new ArrayList();
+        array.add(codme);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, array, connection);
+        if (lista.size() > 0) {
+            txtMatricula.setText(lista.get(0).get(".matric").toString().trim());
+            txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
+            txtCUIL.setText(lista.get(0).get(".gannro").toString().trim().replaceAll("-", ""));
+            txtFecha.setText(lista.get(0).get(".fechan").toString().trim());
+            txtCel.setText(lista.get(0).get(".tecel").toString().trim());
+            txtMail.setText(lista.get(0).get(".mail").toString().trim());
+            btnFaltantes.setEnabled(jdb_permiso.getPermisoPorDelegacion(this.permisoJson, Constante.PERMISO_FALTANTES_IPSST, connection));
+            getEspecialidad(codme);
         }
     }
 
     public void cargarDatosPorMatric() throws SQLException, JSONException, ParseException, Exception {
-        if (txtMatricula.equals("")) {
-            txtCodme.requestFocus();
-        } else {
-            matric = Integer.parseInt(txtMatricula.getText());
-            String sql = "SELECT codme, matric, gannro, nombre, CONCAT(DAY(fchnac), '/',MONTH(fchnac), '/', YEAR(fchnac)) as fechan, tecel, mail "
-                    + "FROM prestadores WHERE codme <= 75000 AND entidad = 0 and tsocio <= 4 and matric = ?";
-            ArrayList array = new ArrayList();
-            array.add(matric);
-            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, array, connection);
-            if (lista.size() > 0) {
-                txtCodme.setText(lista.get(0).get(".codme").toString().trim());
-                txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
-                txtCUIL.setText(lista.get(0).get(".gannro").toString().trim().replaceAll("-", ""));
-                txtFecha.setText(lista.get(0).get(".fechan").toString().trim());
-                txtCel.setText(lista.get(0).get(".tecel").toString().trim());
-                txtMail.setText(lista.get(0).get(".mail").toString().trim());
-                btnFaltantes.setEnabled(jdb_permiso.getPermisoPorDelegacion(this.permisoJson, Constante.PERMISO_FALTANTES_IPSST, connection));
-                getEspecialidad(codme);
-            }else{
-                JOptionPane.showMessageDialog(null, "No existe el socio.", "Mensaje del Sistema", 0);
-                borrarDatos();
-            }
+        matric = Integer.parseInt(txtMatricula.getText());
+        String sql = "SELECT codme, matric, gannro, nombre, CONVERT(DATE, fchnac) as fechan, tecel, mail "
+                + "FROM prestadores WHERE codme <= 75000 AND entidad = 0 and tsocio <= 4 and matric = ?";
+        ArrayList array = new ArrayList();
+        array.add(matric);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, array, connection);
+        if (lista.size() > 0) {
+            txtCodme.setText(lista.get(0).get(".codme").toString().trim());
+            txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
+            txtCUIL.setText(lista.get(0).get(".gannro").toString().trim().replaceAll("-", ""));
+            txtFecha.setText(lista.get(0).get(".fechan").toString().trim());
+            txtCel.setText(lista.get(0).get(".tecel").toString().trim());
+            txtMail.setText(lista.get(0).get(".mail").toString().trim());
+            btnFaltantes.setEnabled(jdb_permiso.getPermisoPorDelegacion(this.permisoJson, Constante.PERMISO_FALTANTES_IPSST, connection));
+            getEspecialidad(codme);
         }
     }
-    
-    public void getEspecialidad(int codme) throws Exception{
+
+    public void getEspecialidad(int codme) throws Exception {
         String _token = cmt_configuracion.getToken(27, connection);
         String _md5 = MD5.getEncodedString(codme + _token);
         String url = "http://138.219.43.212:8084/sprestador/servicio/consulta/getDatosPersonales/" + codme + "/" + _md5;
         JSONObject jsonResult = CallService.getServicioJson(url, connection);
-        if(jsonResult.length() > 0){
+        if (jsonResult.length() > 0) {
             txtEspe.setText(jsonResult.getString("especialidad"));
             //tblEspe.setModel(new ModeloDomEspe(jsonResult.getJSONArray("domproJson")));
-        }else{
+        } else {
             txtEspe.setText("MEDICO");
         }
     }
@@ -150,6 +136,7 @@ public class DashboardOS extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txtMatricula = new javax.swing.JTextField();
         btnBorrar = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         jMenu1.setText("jMenu1");
 
@@ -274,7 +261,6 @@ public class DashboardOS extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Logo Colegio chico.png"))); // NOI18N
 
         btnFaltantes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/faltant.png"))); // NOI18N
-        btnFaltantes.setEnabled(false);
         btnFaltantes.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFaltantesActionPerformed(evt);
@@ -328,6 +314,8 @@ public class DashboardOS extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/minisearch.png"))); // NOI18N
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -342,7 +330,9 @@ public class DashboardOS extends javax.swing.JFrame {
                 .addComponent(txtMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnBorrar)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -351,7 +341,8 @@ public class DashboardOS extends javax.swing.JFrame {
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtMatricula, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnBorrar))
+                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnBorrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtCodme, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -392,16 +383,19 @@ public class DashboardOS extends javax.swing.JFrame {
 
     private void txtCodmeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodmeKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            try {
-                cargarDatosPorCodme();
-            } catch (SQLException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JSONException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+            if (txtCodme.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Campo vacío, ingrese matrícula.");
+                txtMatricula.requestFocus();
+            } else {
+                try {
+                    cargarDatosPorCodme();
+                } catch (JSONException ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParseException ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_txtCodmeKeyPressed
@@ -412,16 +406,19 @@ public class DashboardOS extends javax.swing.JFrame {
 
     private void txtMatriculaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMatriculaKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            try {
-                cargarDatosPorMatric();
-            } catch (SQLException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (JSONException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ParseException ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (Exception ex) {
-                Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+            if (txtMatricula.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Campo vacío, ingrese número de socio.");
+                txtCodme.requestFocus();
+            } else {
+                try {
+                    cargarDatosPorMatric();
+                } catch (JSONException ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ParseException ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (Exception ex) {
+                    Logger.getLogger(DashboardOS.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_txtMatriculaKeyPressed
@@ -435,6 +432,7 @@ public class DashboardOS extends javax.swing.JFrame {
     private javax.swing.JButton btnBorrar;
     private javax.swing.JButton btnFaltantes;
     private javax.swing.JButton btnSalir;
+    private javax.swing.JButton jButton1;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

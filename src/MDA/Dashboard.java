@@ -95,10 +95,10 @@ public class Dashboard extends javax.swing.JFrame {
         String sql1 = "SELECT EstadoId FROM Usuario WHERE NroSocio = '" + NroSocio + "' AND EstadoId = 0";
         ArrayList arrayNom = new ArrayList();
         List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql1, arrayNom, connection);
-        if(lista.size() > 0) {
+        if (lista.size() > 0) {
             btnDesbloquear.show();
             btnDesbloquear.setEnabled(true);
-        }else{
+        } else {
             btnAlta.setVisible(!Prestadores.existeSocio(Integer.valueOf(txtCodme.getText()), connection));
         }
     }
@@ -264,7 +264,7 @@ public class Dashboard extends javax.swing.JFrame {
         switch (tsocio) {
             case 1: {
                 estado = "ACTIVO";
-                btnEstado.setBackground(new java.awt.Color(0,153,0));
+                btnEstado.setBackground(new java.awt.Color(0, 153, 0));
                 btnEstado.setForeground(new java.awt.Color(255, 255, 255));
                 btnEstado.setText(estado);
                 btnEstado.setVisible(true);
@@ -423,6 +423,11 @@ public class Dashboard extends javax.swing.JFrame {
         btnSendIPSST.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/mail.png"))); // NOI18N
         btnSendIPSST.setToolTipText("Enviar Clave IPSST");
         btnSendIPSST.setEnabled(false);
+        btnSendIPSST.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendIPSSTActionPerformed(evt);
+            }
+        });
 
         jLabel4.setText("ID Usuario:");
 
@@ -439,6 +444,11 @@ public class Dashboard extends javax.swing.JFrame {
         btnSendCMT.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/mail.png"))); // NOI18N
         btnSendCMT.setToolTipText("Enviar Clave CMT");
         btnSendCMT.setEnabled(false);
+        btnSendCMT.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSendCMTActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Nombre:");
 
@@ -815,42 +825,6 @@ public class Dashboard extends javax.swing.JFrame {
         vistaControlador.vistaGuiaMedica(this, modal, dashboard, codme, login.user, connection);
     }//GEN-LAST:event_itemGuiamedActionPerformed
 
-    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
-        try {
-            this.dispose();
-            VistaControlador vista = new VistaControlador();
-            vista.vistaDashboard(permisoJson);
-        } catch (JSONException ex) {
-            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
-            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }//GEN-LAST:event_btnReiniciarActionPerformed
-
-    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        System.exit(0);
-    }//GEN-LAST:event_btnSalirActionPerformed
-
-    private void btnControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlActionPerformed
-        vistaControlador.vistaDialogoControl(this, dashboard, excel, connection);
-    }//GEN-LAST:event_btnControlActionPerformed
-
-    private void btnConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaActionPerformed
-        vistaControlador.vistaDialogoConsulta(this, objetoCargador, dashboard, connection);
-    }//GEN-LAST:event_btnConsultaActionPerformed
-
-    private void btnDelegacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelegacionesActionPerformed
-        vistaControlador.vistaDelegaciones(this, true, connection);
-    }//GEN-LAST:event_btnDelegacionesActionPerformed
-
-    private void btnCambioClaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCambioClaveActionPerformed
-        vistaControlador.vistaCambiarClave(this, true, objetoCargador, controlador, dialogoconsulta, user, connection);
-    }//GEN-LAST:event_btnCambioClaveActionPerformed
-
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        vistaControlador.vistaBuscar(this, false, this, connection);
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
     private void txtCodmeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodmeKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (txtCodme.getText().equals("")) {
@@ -969,6 +943,52 @@ public class Dashboard extends javax.swing.JFrame {
     private void itemComunicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemComunicarActionPerformed
         vistaControlador.vistaFtermino(this, true, connection);
     }//GEN-LAST:event_itemComunicarActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        vistaControlador.vistaBuscar(this, false, this, connection);
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnCambioClaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCambioClaveActionPerformed
+        vistaControlador.vistaCambiarClave(this, true, objetoCargador, controlador, dialogoconsulta, user, connection);
+    }//GEN-LAST:event_btnCambioClaveActionPerformed
+
+    private void btnDelegacionesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDelegacionesActionPerformed
+        vistaControlador.vistaDelegaciones(this, true, connection);
+    }//GEN-LAST:event_btnDelegacionesActionPerformed
+
+    private void btnConsultaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultaActionPerformed
+        vistaControlador.vistaDialogoConsulta(this, objetoCargador, dashboard, connection);
+    }//GEN-LAST:event_btnConsultaActionPerformed
+
+    private void btnControlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnControlActionPerformed
+        vistaControlador.vistaDialogoControl(this, dashboard, excel, connection);
+    }//GEN-LAST:event_btnControlActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        System.exit(0);
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
+        try {
+            this.dispose();
+            VistaControlador vista = new VistaControlador();
+            vista.vistaDashboard(permisoJson);
+        } catch (JSONException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnReiniciarActionPerformed
+
+    private void btnSendCMTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendCMTActionPerformed
+        Mail mail = new Mail();
+        mail.sendMailCMT(objetoCargador);
+    }//GEN-LAST:event_btnSendCMTActionPerformed
+
+    private void btnSendIPSSTActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendIPSSTActionPerformed
+        Mail mail = new Mail();
+        mail.sendMailIPSST(objetoCargador);
+    }//GEN-LAST:event_btnSendIPSSTActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlta;

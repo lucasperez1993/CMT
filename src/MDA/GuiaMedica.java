@@ -77,6 +77,12 @@ public class GuiaMedica extends javax.swing.JDialog {
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Selecciones Obra Social");
 
+        cbOS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbOSActionPerformed(evt);
+            }
+        });
+
         btnAgregar.setText("AGREGAR");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -157,6 +163,10 @@ public class GuiaMedica extends javax.swing.JDialog {
             Logger.getLogger(GuiaMedica.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void cbOSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbOSActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbOSActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

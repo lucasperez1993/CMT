@@ -108,7 +108,7 @@ public class Mail
             adjunto.setDataHandler(new DataHandler((DataSource)new FileDataSource(new JFileChooser().getSelectedFile())));
             MimeMessage message = new MimeMessage(session);
             message.setFrom((Address)new InternetAddress("claves@colemed.com"));
-            message.addRecipient(Message.RecipientType.TO, (Address)new InternetAddress(objCargador.mail));
+            message.addRecipient(Message.RecipientType.TO, (Address)new InternetAddress(objCargador.mail)); //InternetAddress("mesadeayuda@colegiomedicotucuman.com.ar"));
             message.setSubject("Información Importante Dpto. Prestacional CMT");
             MimeMultipart content = new MimeMultipart();
             MimeBodyPart textPart = new MimeBodyPart();

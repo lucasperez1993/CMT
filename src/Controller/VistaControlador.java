@@ -1,6 +1,7 @@
 package Controller;
 
 import Admin.Inicio;
+import COLEGYM.DashboardColegym;
 import Login.Login;
 import MDA.Buscar;
 import MDA.CambiarClave;
@@ -42,6 +43,11 @@ public class VistaControlador {
     
     public void vistaDashboard(JSONObject permisJson) throws JSONException, ParseException{
         Dashboard dashboard = new Dashboard(permisJson);
+        dashboard.setVisible(true);
+    }
+    
+    public void vistaDashboarColegym(){
+        DashboardColegym dashboard = new DashboardColegym();
         dashboard.setVisible(true);
     }
     
