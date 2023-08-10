@@ -2,6 +2,7 @@ package Controller;
 
 import Admin.Inicio;
 import COLEGYM.DashboardColegym;
+import COLEGYM.DialogoGrupoFamiliar;
 import Login.Login;
 import MDA.Buscar;
 import MDA.CambiarClave;
@@ -101,5 +102,10 @@ public class VistaControlador {
     public void vistaFaltantesIPSST(java.awt.Frame parent, boolean b, Connection connection){
         DialogoFaltantes dialogoFaltantes = new DialogoFaltantes(parent, b, connection);
         dialogoFaltantes.setVisible(true);
+    }
+    
+    public void vistaDialogoGrupoFamiliar(java.awt.Frame parent, boolean b){
+        DialogoGrupoFamiliar dialogoGrupoFamiliar = new DialogoGrupoFamiliar(parent, b);
+        dialogoGrupoFamiliar.setVisible(true);
     }
 }

@@ -1,6 +1,7 @@
 package COLEGYM;
 
 import Conexion.Conexion;
+import Controller.VistaControlador;
 import Login.Login;
 import Models.ModeloIngresos;
 import java.awt.event.KeyEvent;
@@ -20,10 +21,10 @@ import util.Reflection;
  * @author lperez
  */
 public class DashboardColegym extends javax.swing.JFrame {
-
     public Connection connectionVPS;
     Login login;
     Conexion con = new Conexion();
+    VistaControlador vistaControlador = new VistaControlador();
 
     public DashboardColegym(JSONObject permisJson) throws SQLException {
         connectionVPS = con.GetConnectionVPS();
@@ -121,6 +122,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
         btnRutinas = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
+        btnGrupoFamiliar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -197,6 +199,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo-colegym.png"))); // NOI18N
 
+        lblUsuario.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
         lblUsuario.setForeground(new java.awt.Color(51, 153, 255));
         lblUsuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
@@ -220,16 +223,16 @@ public class DashboardColegym extends javax.swing.JFrame {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
+                        .addComponent(lblUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -250,6 +253,19 @@ public class DashboardColegym extends javax.swing.JFrame {
 
         btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/searchbtn.png"))); // NOI18N
         btnBuscar.setToolTipText("Buscar Afiliado");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
+
+        btnGrupoFamiliar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/relations_1.png"))); // NOI18N
+        btnGrupoFamiliar.setToolTipText("Grupo Familiar");
+        btnGrupoFamiliar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGrupoFamiliarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -259,6 +275,8 @@ public class DashboardColegym extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGrupoFamiliar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBuscar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRutinas)
@@ -274,7 +292,8 @@ public class DashboardColegym extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
                     .addComponent(btnSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRutinas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGrupoFamiliar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -314,6 +333,7 @@ public class DashboardColegym extends javax.swing.JFrame {
                 txtDNI.requestFocus();
             } else {
                 insertIngreso();
+                txtDNI.setText("");
             }
         } catch (SQLException ex) {
             Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
@@ -328,6 +348,7 @@ public class DashboardColegym extends javax.swing.JFrame {
                     txtDNI.requestFocus();
                 } else {
                     insertIngreso();
+                    txtDNI.setText("");
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
@@ -335,9 +356,18 @@ public class DashboardColegym extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDNIKeyPressed
 
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void btnGrupoFamiliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrupoFamiliarActionPerformed
+        vistaControlador.vistaDialogoGrupoFamiliar(this, true);
+    }//GEN-LAST:event_btnGrupoFamiliarActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
+    private javax.swing.JButton btnGrupoFamiliar;
     private javax.swing.JButton btnMarcar;
     private javax.swing.JButton btnRutinas;
     private javax.swing.JButton btnSalir;
