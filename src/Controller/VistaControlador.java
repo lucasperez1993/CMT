@@ -16,6 +16,7 @@ import MDA.FueraDeTermino;
 import MDA.GuiaMedica;
 import OS.DialogoFaltantes;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import objeto.Cargador;
 import org.json.JSONException;
@@ -46,7 +47,7 @@ public class VistaControlador {
         dashboard.setVisible(true);
     }
     
-    public void vistaDashboarColegym(JSONObject permisJson){
+    public void vistaDashboarColegym(JSONObject permisJson) throws SQLException{
         DashboardColegym dashboard = new DashboardColegym(permisJson);
         dashboard.setVisible(true);
     }

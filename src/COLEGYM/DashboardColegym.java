@@ -1,13 +1,18 @@
 package COLEGYM;
 
 import Conexion.Conexion;
+import Login.Login;
 import Models.ModeloIngresos;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.TableColumnModel;
 import org.json.JSONObject;
 import util.Reflection;
 /**
@@ -15,39 +20,88 @@ import util.Reflection;
  * @author lperez
  */
 public class DashboardColegym extends javax.swing.JFrame {
+
     public Connection connectionVPS;
+    Login login;
     Conexion con = new Conexion();
-    
+
     public DashboardColegym(JSONObject permisJson) throws SQLException {
         connectionVPS = con.GetConnectionVPS();
         initComponents();
+        lblUsuario.setText(Login.username);
         mostrarIngresosHoy();
+        txtDNI.requestFocus();
     }
 
-    public void mostrarIngresosHoy() throws SQLException{
-        String sql = "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, a.nombre, i.fecha, i.numdoc " 
-        + "FROM gym_ingresos i " 
-        + "LEFT JOIN gym_adh_inscripto a ON i.numdoc = a.numdoc " 
-        + "WHERE CONVERT(VARCHAR(10),fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND a.nombre IS NOT NULL " 
-        + "UNION " 
-        + "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc " 
-        + "FROM gym_ingresos i " 
-        + "LEFT JOIN prestadores p ON p.numdoc = i.numdoc " 
-        + "LEFT JOIN gym_med_inscripto m ON m.codme = p.codme " 
-        + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
-            ArrayList arrayIng = new ArrayList();
-            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connectionVPS);
-            if (lista.size() > 0) {
-                getTblIngresos().setModel(new ModeloIngresos(lista));
-            }else{
-                JOptionPane.showMessageDialog(null, "Aún no hay ingresos registrados.", "Mensaje del Sistema", 1);
-            }
+    public void mostrarIngresosHoy() throws SQLException {
+        String sql = "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, a.nombre, i.fecha, i.numdoc "
+                + "FROM gym_ingresos i "
+                + "LEFT JOIN gym_adh_inscripto a ON i.numdoc = a.numdoc "
+                + "WHERE CONVERT(VARCHAR(10),fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND a.nombre IS NOT NULL "
+                + "UNION "
+                + "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc "
+                + "FROM gym_ingresos i "
+                + "LEFT JOIN prestadores p ON p.numdoc = i.numdoc "
+                + "LEFT JOIN gym_med_inscripto m ON m.codme = p.codme "
+                + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
+        ArrayList arrayIng = new ArrayList();
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connectionVPS);
+        if (lista.size() > 0) {
+            getTblIngresos().setModel(new ModeloIngresos(lista));
+            TableColumnModel columnModel = tblIngresos.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(300);
+        } else {
+            System.out.println("No hay ingresos");
+        }
     }
-    
-    public void insertIngresos(){
+
+    public void insertIngreso() throws SQLException {
         String numdoc = txtDNI.getText();
+        String sql = "SELECT numdoc FROM gym_ingresos "
+                + "WHERE numdoc = ? AND DAY(fecha) = DAY(GETDATE()) "
+                + "AND MONTH(fecha) = MONTH(GETDATE()) AND YEAR(fecha) = YEAR(GETDATE())";
+        ArrayList arrayExisteIngreso = new ArrayList();
+        arrayExisteIngreso.add(numdoc);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayExisteIngreso, connectionVPS);
+        if (lista.size() > 0) {
+            JOptionPane.showMessageDialog(null, "El afiliado ya fue ingresado.", "Mensaje del Sistema", 2);
+        } else {
+            String sql2 = "SELECT numdoc, nombre FROM gym_adh_inscripto WHERE numdoc = ? AND estado = ?";
+            ArrayList arrayExisteIngresoAdh = new ArrayList();
+            arrayExisteIngresoAdh.add(numdoc);
+            arrayExisteIngresoAdh.add(1);
+            List<Map<String, Object>> lista2 = Reflection.getMapQueryResultByPreparedStatement(sql2, arrayExisteIngresoAdh, connectionVPS);
+            if (lista2.size() > 0) {
+                String insert = "INSERT INTO gym_ingresos "
+                        + "VALUES (" + numdoc + ", GETDATE())";
+                connectionVPS.createStatement().execute(insert);
+                mostrarIngresosHoy();
+                txtDNI.requestFocus();
+            } else {
+                String sql3 = "SELECT p.numdoc FROM prestadores p "
+                        + "LEFT JOIN gym_med_inscripto g ON p.codme=g.codme "
+                        + "WHERE p.numdoc = ? AND p.tsocio <= ? AND p.codme <= ? AND p.entidad = ? AND estado = ?";
+                ArrayList arrayExisteIngresoSoc = new ArrayList();
+                arrayExisteIngresoSoc.add(numdoc);
+                arrayExisteIngresoSoc.add(4);
+                arrayExisteIngresoSoc.add(75000);
+                arrayExisteIngresoSoc.add(0);
+                arrayExisteIngresoSoc.add(1);
+                List<Map<String, Object>> lista3 = Reflection.getMapQueryResultByPreparedStatement(sql3, arrayExisteIngresoSoc, connectionVPS);
+                if (lista3.size() > 0) {
+                    String insert = "INSERT INTO gym_ingresos "
+                            + "VALUES (" + numdoc + ", GETDATE())";
+                    connectionVPS.createStatement().execute(insert);
+                    mostrarIngresosHoy();
+                    txtDNI.requestFocus();
+                } else {
+                    JOptionPane.showMessageDialog(null, "El D.N.I. ingresado no corresponde a un afiliado activo.", "Mensaje del Sistema", 2);
+                }
+            }
+        }
+
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -61,6 +115,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblIngresos = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
+        lblUsuario = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnSalir = new javax.swing.JButton();
@@ -75,7 +130,18 @@ public class DashboardColegym extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Marcar ingreso"));
 
+        txtDNI.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtDNIKeyPressed(evt);
+            }
+        });
+
         btnMarcar.setText("Marcar");
+        btnMarcar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMarcarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -125,13 +191,14 @@ public class DashboardColegym extends javax.swing.JFrame {
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/logo-colegym.png"))); // NOI18N
+
+        lblUsuario.setForeground(new java.awt.Color(51, 153, 255));
+        lblUsuario.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -143,19 +210,26 @@ public class DashboardColegym extends javax.swing.JFrame {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lblUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -233,6 +307,35 @@ public class DashboardColegym extends javax.swing.JFrame {
         System.exit(0);
     }//GEN-LAST:event_btnSalirActionPerformed
 
+    private void btnMarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarActionPerformed
+        try {
+            if (txtDNI.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", 1);
+                txtDNI.requestFocus();
+            } else {
+                insertIngreso();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_btnMarcarActionPerformed
+
+    private void txtDNIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDNIKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            try {
+                if (txtDNI.equals("")) {
+                    JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", 1);
+                    txtDNI.requestFocus();
+                } else {
+                    insertIngreso();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }//GEN-LAST:event_txtDNIKeyPressed
+
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnMarcar;
@@ -246,6 +349,7 @@ public class DashboardColegym extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel lblUsuario;
     private javax.swing.JTable tblIngresos;
     private javax.swing.JTextField txtDNI;
     // End of variables declaration//GEN-END:variables
@@ -264,5 +368,13 @@ public class DashboardColegym extends javax.swing.JFrame {
 
     public void setTxtDNI(javax.swing.JTextField txtDNI) {
         this.txtDNI = txtDNI;
+    }
+
+    public javax.swing.JLabel getLblUsuario() {
+        return lblUsuario;
+    }
+
+    public void setLblUsuario(javax.swing.JLabel lblUsuario) {
+        this.lblUsuario = lblUsuario;
     }
 }
