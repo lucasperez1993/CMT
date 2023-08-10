@@ -56,6 +56,9 @@ public class Login extends javax.swing.JFrame {
                 else if(jdb_permiso.getPermisoPorDelegacion(jsonPermiso, Constante.PERMISO_OS_CMT, connection)){
                     controlador.vistaDashboardOS(jsonPermiso, connection);
                 }
+                else if(jdb_permiso.getPermisoPorDelegacion(jsonPermiso, Constante.PERMISO_COLEGYM_CMT, connection)){
+                    controlador.vistaDashboarColegym(jsonPermiso);
+                }
                 else{
                     JOptionPane.showMessageDialog(null, "No posee permisos para realizar esta acción.", "Mensaje del Sistema", 0);
                     System.exit(0);

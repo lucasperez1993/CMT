@@ -27,7 +27,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import otro.Constante;
 import util.Reflection;
-
 /**
  *
  * @author lperez

@@ -46,8 +46,8 @@ public class VistaControlador {
         dashboard.setVisible(true);
     }
     
-    public void vistaDashboarColegym(){
-        DashboardColegym dashboard = new DashboardColegym();
+    public void vistaDashboarColegym(JSONObject permisJson){
+        DashboardColegym dashboard = new DashboardColegym(permisJson);
         dashboard.setVisible(true);
     }
     

@@ -1,10 +1,5 @@
-// 
-// Decompiled by Procyon v0.5.36
-// 
-
 package Models;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
@@ -19,7 +14,7 @@ public class ModeloConsulta extends AbstractTableModel
     
     public ModeloConsulta(final List<Map<String, Object>> array) {
         this.colnum = 9;
-        this.colNames = new String[] { "Nombre", "N° Socio / Cargador", "Motivo Consulta", "Soluci\u00f3n", "Fecha Inicio", "Fecha Fin", "Medio de Recepci\u00f3n", "Obra Social / Sistema", "Observaciones" };
+        this.colNames = new String[] { "Nombre", "N° Socio / Cargador", "Motivo Consulta", "Solución", "Fecha Inicio", "Fecha Fin", "Medio de Recepción", "Obra Social / Sistema", "Observaciones" };
         this.registros = new ArrayList<Object[]>();
         try {
             for (final Map<String, Object> map : array) {
