@@ -23,6 +23,7 @@ import util.Reflection;
 public class DashboardColegym extends javax.swing.JFrame {
     public Connection connectionVPS;
     Login login;
+    DialogoAfiliados dialogoAfiliados = new DialogoAfiliados(this, true);
     Conexion con = new Conexion();
     VistaControlador vistaControlador = new VistaControlador();
 
@@ -123,6 +124,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         btnRutinas = new javax.swing.JButton();
         btnBuscar = new javax.swing.JButton();
         btnGrupoFamiliar = new javax.swing.JButton();
+        btnAfiliados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -232,7 +234,7 @@ public class DashboardColegym extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 24, Short.MAX_VALUE)))
+                        .addComponent(lblUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 40, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -267,6 +269,13 @@ public class DashboardColegym extends javax.swing.JFrame {
             }
         });
 
+        btnAfiliados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add-user.png"))); // NOI18N
+        btnAfiliados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAfiliadosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -275,6 +284,8 @@ public class DashboardColegym extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnAfiliados)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGrupoFamiliar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBuscar)
@@ -289,11 +300,12 @@ public class DashboardColegym extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRutinas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGrupoFamiliar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnGrupoFamiliar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAfiliados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -313,7 +325,7 @@ public class DashboardColegym extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -328,7 +340,7 @@ public class DashboardColegym extends javax.swing.JFrame {
 
     private void btnMarcarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMarcarActionPerformed
         try {
-            if (txtDNI.getText().equals("")) {
+            if (txtDNI.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", 1);
                 txtDNI.requestFocus();
             } else {
@@ -343,7 +355,7 @@ public class DashboardColegym extends javax.swing.JFrame {
     private void txtDNIKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDNIKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
-                if (txtDNI.equals("")) {
+                if (txtDNI.getText().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", 1);
                     txtDNI.requestFocus();
                 } else {
@@ -357,15 +369,20 @@ public class DashboardColegym extends javax.swing.JFrame {
     }//GEN-LAST:event_txtDNIKeyPressed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        // TODO add your handling code here:
+        vistaControlador.vistaBuscarSocioColegym(this, true, dialogoAfiliados, connectionVPS);
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnGrupoFamiliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrupoFamiliarActionPerformed
         vistaControlador.vistaDialogoGrupoFamiliar(this, true);
     }//GEN-LAST:event_btnGrupoFamiliarActionPerformed
 
+    private void btnAfiliadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfiliadosActionPerformed
+        vistaControlador.vistaDialogoAfiliados(this, true);
+    }//GEN-LAST:event_btnAfiliadosActionPerformed
+
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAfiliados;
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnGrupoFamiliar;
     private javax.swing.JButton btnMarcar;

@@ -4,6 +4,7 @@ import Controller.VistaControlador;
 import Login.Login;
 import MDA.Dashboard;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,7 +22,6 @@ public class Inicio extends javax.swing.JFrame {
     public JSONObject permisoJson;
     
     public Inicio(JSONObject permisoJson, Login login, Connection connection) {
-        VistaControlador controlador = new VistaControlador();
         this.connection = connection;
         this.login = login;
         this.permisoJson = permisoJson;
@@ -152,7 +152,11 @@ public class Inicio extends javax.swing.JFrame {
     }//GEN-LAST:event_btnOSActionPerformed
 
     private void btnColegymActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnColegymActionPerformed
-        controlador.vistaDashboarColegym(this.permisoJson);
+        try {
+            controlador.vistaDashboarColegym(this.permisoJson);
+        } catch (SQLException ex) {
+            Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btnColegymActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

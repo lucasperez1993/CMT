@@ -2,7 +2,6 @@ package COLEGYM;
 
 import Conexion.Conexion;
 import Models.ModeloGrupoFamiliar;
-import Models.ModeloIngresos;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -14,25 +13,25 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableColumnModel;
 import util.Reflection;
-
 /**
  *
  * @author lperez
  */
 public class DialogoGrupoFamiliar extends javax.swing.JDialog {
+
     public Connection connection5;
     Conexion con = new Conexion();
-    
+
     public DialogoGrupoFamiliar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         connection5 = con.GetConnection5();
         initComponents();
     }
 
-    public void cargarGrupoFamiliar() throws SQLException{
+    public void cargarGrupoFamiliar() throws SQLException {
         int codme = Integer.valueOf(txtCodme.getText());
         String sql = "SELECT A.numdoc as dni, p.pre_id,P.CODME,P.NOMBRE,RTRIM(LTRIM(A.NOMBRE)) as nombrea,A.SUBC,A.PAREN paren,p.numdoc,a.numdoc numdoca "
-                + "FROM club_ti C LEFT JOIN PRESTADORES P ON C.PRE_ID=P.PRE_ID " 
+                + "FROM club_ti C LEFT JOIN PRESTADORES P ON C.PRE_ID=P.PRE_ID "
                 + "LEFT JOIN CLUB_AD A ON C.PRE_ID=A.PRE_ID WHERE C.ESTADO=1 AND P.CODME = ? ORDER BY P.NOMBRE,a.subc";
         ArrayList arrayGrupoFamiliar = new ArrayList();
         arrayGrupoFamiliar.add(codme);
@@ -43,10 +42,10 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
             TableColumnModel columnModel = tblGrupoFamiliar.getColumnModel();
             columnModel.getColumn(0).setPreferredWidth(300);
         } else {
-            
+            JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", 0);
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -58,6 +57,7 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
         txtCodme = new javax.swing.JTextField();
         btnBuscar = new javax.swing.JButton();
         lblNombre = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         btnVolver = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -96,11 +96,16 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 0, 51));
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/tooltip.png"))); // NOI18N
+        jLabel2.setText("Si el número de documento se encuentra en 0, el adherente no podrá inscribirse hasta actualizar sus datos.");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
@@ -110,17 +115,23 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
                 .addComponent(btnBuscar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblNombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCodme, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCodme, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -159,7 +170,7 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtCodmeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodmeActionPerformed
-        
+
     }//GEN-LAST:event_txtCodmeActionPerformed
 
     private void btnVolverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVolverActionPerformed
@@ -168,11 +179,13 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
 
     private void txtCodmeKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodmeKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if(txtCodme.getText().equals("")){
+            if (txtCodme.getText().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Campo vacío");
-            }else{
+            } else {
                 try {
                     cargarGrupoFamiliar();
+                    txtCodme.setText("");
+                    txtCodme.requestFocus();
                 } catch (SQLException ex) {
                     Logger.getLogger(DialogoGrupoFamiliar.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -181,11 +194,13 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
     }//GEN-LAST:event_txtCodmeKeyPressed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        if(txtCodme.getText().equals("")){
+        if (txtCodme.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Campo vacío");
-        }else{
+        } else {
             try {
                 cargarGrupoFamiliar();
+                txtCodme.setText("");
+                txtCodme.requestFocus();
             } catch (SQLException ex) {
                 Logger.getLogger(DialogoGrupoFamiliar.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -197,6 +212,7 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
     private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnVolver;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblNombre;

@@ -1,44 +1,38 @@
-package MDA;
+package COLEGYM;
 
 import Conexion.Conexion;
 import Models.ModeloBuscar;
-import Models.SqlMesaDeAyuda;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import org.json.JSONException;
 import util.Reflection;
-
 /**
  *
  * @author lperez
  */
-public class Buscar extends javax.swing.JDialog {
+public class BuscarSocio extends javax.swing.JDialog {
 
     public Connection connection = null;
-    public Dashboard dashboard;
+    public DashboardColegym dashboard;
+    public DialogoAfiliados dialogo;
     public int codme;
-    SqlMesaDeAyuda mesa;
     public String condicion;
     public int bandera;
     public List<Map<String, Object>> listaMedicos;
 
-    public Buscar(java.awt.Frame parent, boolean modal, Dashboard dashboard, Connection connection) {
+    public BuscarSocio(java.awt.Frame parent, boolean modal, DialogoAfiliados dialogo, Connection connection) {
         super(parent, modal);
         codme = 0;
-        mesa = null;
         condicion = "";
         initComponents();
-        rbMedico.setSelected(true);
         txtBuscar.requestFocus();
         this.connection = connection;
-        this.dashboard = dashboard;
+        this.dialogo = dialogo;
     }
 
     public void Condicion() {
@@ -60,10 +54,7 @@ public class Buscar extends javax.swing.JDialog {
         if (txtBuscar.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Campo vacío");
             txtBuscar.requestFocus();
-        } else if (rbMedico.isSelected() && rbCargador.isSelected()) {
-            JOptionPane.showMessageDialog(null, "No puede seleccionar ambos", null, 1);
-            txtBuscar.requestFocus();
-        } else if (rbMedico.isSelected()) {
+        } else {
             try {
                 Condicion();
                 if (bandera == 0) {
@@ -75,7 +66,7 @@ public class Buscar extends javax.swing.JDialog {
                     } else {
                         JOptionPane.showMessageDialog(null, "No existe.");
                     }
-                } else {
+                } else if (bandera == 1) {
                     String query = "SELECT p.codme, p.nombre FROM prestadores p"
                             + " LEFT JOIN especialidades e ON p.espe1 = e.esp_id OR p.espe2 = e.esp_id OR p.espe3 = e.esp_id"
                             + " WHERE e.nombre LIKE '%" + txtBuscar.getText() + "%'";
@@ -86,19 +77,19 @@ public class Buscar extends javax.swing.JDialog {
                     } else {
                         JOptionPane.showMessageDialog(null, "No existe.");
                     }
-                }
-            } catch (SQLException ex) {
-            }
-        } else {
-            try {
-                Condicion();
-                String query = "SELECT * FROM cmt_cargador WHERE " + condicion + " LIKE '%" + txtBuscar.getText() + "%'";
-                ArrayList arrayBuscar = new ArrayList();
-                listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, con.GetConnectionCloud());
-                if (listaMedicos.size() > 0) {
-                    getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
                 } else {
-                    JOptionPane.showMessageDialog(null, "No existe.");
+                    try {
+                        Condicion();
+                        String query = "SELECT * FROM cmt_cargador WHERE " + condicion + " LIKE '%" + txtBuscar.getText() + "%'";
+                        ArrayList arrayBuscar = new ArrayList();
+                        listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, con.GetConnectionCloud());
+                        if (listaMedicos.size() > 0) {
+                            getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No existe.");
+                        }
+                    } catch (SQLException ex) {
+                    }
                 }
             } catch (SQLException ex) {
             }
@@ -112,8 +103,6 @@ public class Buscar extends javax.swing.JDialog {
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        rbMedico = new javax.swing.JRadioButton();
-        rbCargador = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         rbNombre = new javax.swing.JRadioButton();
         rbMatricula = new javax.swing.JRadioButton();
@@ -130,40 +119,18 @@ public class Buscar extends javax.swing.JDialog {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Buscar"));
 
-        buttonGroup1.add(rbMedico);
-        rbMedico.setSelected(true);
-        rbMedico.setText("Médico");
-
-        buttonGroup1.add(rbCargador);
-        rbCargador.setText("Cargador");
-
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Buscar por:");
 
         buttonGroup2.add(rbNombre);
         rbNombre.setSelected(true);
         rbNombre.setText("Nombre");
-        rbNombre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbNombreActionPerformed(evt);
-            }
-        });
 
         buttonGroup2.add(rbMatricula);
         rbMatricula.setText("Matrícula");
-        rbMatricula.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbMatriculaActionPerformed(evt);
-            }
-        });
 
         buttonGroup2.add(rbEspe);
         rbEspe.setText("Especialidad");
-        rbEspe.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                rbEspeActionPerformed(evt);
-            }
-        });
 
         txtBuscar.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -203,13 +170,7 @@ public class Buscar extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(rbMatricula)
                         .addGap(104, 104, 104)
-                        .addComponent(rbEspe))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(61, 61, 61)
-                        .addComponent(rbMedico)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(rbCargador)
-                        .addGap(57, 57, 57)))
+                        .addComponent(rbEspe)))
                 .addContainerGap())
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
         );
@@ -217,10 +178,6 @@ public class Buscar extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbMedico)
-                    .addComponent(rbCargador))
-                .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -277,39 +234,20 @@ public class Buscar extends javax.swing.JDialog {
             try {
                 buscar();
             } catch (SQLException ex) {
-                Logger.getLogger(Buscar.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(BuscarSocio.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_txtBuscarKeyPressed
 
     private void tblBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblBuscarMouseClicked
         if (evt.getClickCount() == 2) {
-            try {
-                codme = Integer.valueOf(listaMedicos.get(tblBuscar.getSelectedRow()).get(".codme").toString());
-                dashboard.txtCodme.setText(codme + "");
-                dashboard.cargarDatos();
-                dashboard.estaBloqueado();
-                dispose();
-            } catch (SQLException ex3) {
-            } catch (JSONException ex) {
-                Logger.getLogger(Buscar.class.getName()).log(Level.SEVERE, null, (Throwable) ex);
-            } catch (ParseException ex2) {
-                Logger.getLogger(Buscar.class.getName()).log(Level.SEVERE, null, ex2);
-            }
+            codme = Integer.valueOf(listaMedicos.get(tblBuscar.getSelectedRow()).get(".codme").toString());
+            String nombre = listaMedicos.get(tblBuscar.getSelectedRow()).get(".nombre").toString();
+            dialogo.txtCodme.setText(codme + "");
+            dialogo.txtNombre.setText(nombre.trim());
+            dispose();
         }
     }//GEN-LAST:event_tblBuscarMouseClicked
-
-    private void rbMatriculaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbMatriculaActionPerformed
-        txtBuscar.requestFocus();
-    }//GEN-LAST:event_rbMatriculaActionPerformed
-
-    private void rbEspeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbEspeActionPerformed
-        txtBuscar.requestFocus();
-    }//GEN-LAST:event_rbEspeActionPerformed
-
-    private void rbNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNombreActionPerformed
-        txtBuscar.requestFocus();
-    }//GEN-LAST:event_rbNombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -319,22 +257,12 @@ public class Buscar extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JRadioButton rbCargador;
     private javax.swing.JRadioButton rbEspe;
     private javax.swing.JRadioButton rbMatricula;
-    private javax.swing.JRadioButton rbMedico;
     private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblBuscar;
     private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
-
-    public javax.swing.JRadioButton getRbCargador() {
-        return rbCargador;
-    }
-
-    public void setRbCargador(javax.swing.JRadioButton rbCargador) {
-        this.rbCargador = rbCargador;
-    }
 
     public javax.swing.JRadioButton getRbEspecialidad() {
         return rbEspe;
@@ -350,14 +278,6 @@ public class Buscar extends javax.swing.JDialog {
 
     public void setRbMatricula(javax.swing.JRadioButton rbMatricula) {
         this.rbMatricula = rbMatricula;
-    }
-
-    public javax.swing.JRadioButton getRbMedico() {
-        return rbMedico;
-    }
-
-    public void setRbMedico(javax.swing.JRadioButton rbMedico) {
-        this.rbMedico = rbMedico;
     }
 
     public javax.swing.JRadioButton getRbNombre() {

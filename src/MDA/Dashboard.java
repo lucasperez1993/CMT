@@ -208,7 +208,8 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     public void datosMedico() {
-        final String query = "SELECT p.codme, p.nombre, p.gannro, p.tecel FROM prestadores p INNER JOIN cmt_medicocargador m ON p.codme=m.codme WHERE m.idcargador = " + this.objetoCargador.id_cargador + " AND m.estado = 1";
+        final String query = "SELECT p.codme, p.nombre, p.gannro, p.tecel FROM prestadores p "
+                + "INNER JOIN cmt_medicocargador m ON p.codme=m.codme WHERE m.idcargador = " + this.objetoCargador.id_cargador + " AND m.estado = 1";
         try {
             ArrayList arrayMed = new ArrayList();
             listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayMed, this.connection);
@@ -226,8 +227,10 @@ public class Dashboard extends javax.swing.JFrame {
             String query = "SELECT c.codme, c.nombre, c.dni, c.telefono "
                     + "FROM cmt_cargador c "
                     + "LEFT JOIN cmt_medicocargador m ON c.idcargador = m.idcargador "
-                    + "WHERE m.codme = " + codme + " AND m.estado = 1";
+                    + "WHERE m.codme = ? AND m.estado = ?";
             ArrayList arrayDel = new ArrayList();
+            arrayDel.add(codme);
+            arrayDel.add(1);
             listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayDel, connection);
             getTblCargadores().setModel(new ModeloMesa(listaMedicos));
             c = listaMedicos.size();

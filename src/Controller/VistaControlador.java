@@ -1,7 +1,9 @@
 package Controller;
 
 import Admin.Inicio;
+import COLEGYM.BuscarSocio;
 import COLEGYM.DashboardColegym;
+import COLEGYM.DialogoAfiliados;
 import COLEGYM.DialogoGrupoFamiliar;
 import Login.Login;
 import MDA.Buscar;
@@ -29,6 +31,8 @@ import org.json.JSONObject;
 public class VistaControlador {
     Connection connection;
     Dashboard dashboard;
+    DialogoAfiliados dialogoAfiliados;
+    DashboardColegym dashboardColegym;
     Excel excel;
     Cargador objetoCargador;
     Login login;
@@ -66,6 +70,11 @@ public class VistaControlador {
     public void vistaBuscar(java.awt.Frame parent, boolean b, Dashboard dashboard, Connection connection){
         Buscar buscar = new Buscar(parent, b, dashboard, connection);
         buscar.setVisible(true);
+    }
+    
+    public void vistaBuscarSocioColegym(java.awt.Frame parent, boolean b, DialogoAfiliados dialogoAfiliados, Connection connection){
+        BuscarSocio buscarSocio = new BuscarSocio(parent, b, dialogoAfiliados, connection);
+        buscarSocio.setVisible(true);
     }
  
     public void vistaEspecialidad(java.awt.Frame parent, boolean b, Dashboard dashboard, Connection connection){
@@ -107,5 +116,10 @@ public class VistaControlador {
     public void vistaDialogoGrupoFamiliar(java.awt.Frame parent, boolean b){
         DialogoGrupoFamiliar dialogoGrupoFamiliar = new DialogoGrupoFamiliar(parent, b);
         dialogoGrupoFamiliar.setVisible(true);
+    }
+    
+    public void vistaDialogoAfiliados(java.awt.Frame parent, boolean b){
+        DialogoAfiliados dialogoAfiliados = new DialogoAfiliados(parent, b);
+        dialogoAfiliados.setVisible(true);
     }
 }
