@@ -30,13 +30,13 @@ public class Login extends javax.swing.JFrame {
     
     public Login() {
         final Conexion conn = new Conexion();
-        this.connection = conn.GetConnectionCloud();
+        this.connection = conn.GetConnection5();
         initComponents();
     }
 
     public void esUsuario() throws SQLException, JSONException {
         try {
-            final PreparedStatement ps = this.connection.prepareStatement("SELECT * FROM cmt_usuariomesa WHERE usuario = ? AND clave = ?");
+            final PreparedStatement ps = this.connection.prepareStatement("SELECT * FROM cmt_usuarios_java WHERE usuario = ? AND clave = ?");
             ps.setObject(1, this.txtUser.getText());
             ps.setObject(2, this.txtClave.getText());
             final ResultSet rs = ps.executeQuery();

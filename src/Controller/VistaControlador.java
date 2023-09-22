@@ -3,6 +3,7 @@ package Controller;
 import Admin.Inicio;
 import COLEGYM.BuscarSocio;
 import COLEGYM.DashboardColegym;
+import COLEGYM.DialogoAdherente;
 import COLEGYM.DialogoAfiliados;
 import COLEGYM.DialogoGrupoFamiliar;
 import Login.Login;
@@ -32,6 +33,7 @@ public class VistaControlador {
     Connection connection;
     Dashboard dashboard;
     DialogoAfiliados dialogoAfiliados;
+    DialogoAdherente dialogoAdherente;
     DashboardColegym dashboardColegym;
     Excel excel;
     Cargador objetoCargador;
@@ -121,5 +123,10 @@ public class VistaControlador {
     public void vistaDialogoAfiliados(java.awt.Frame parent, boolean b){
         DialogoAfiliados dialogoAfiliados = new DialogoAfiliados(parent, b);
         dialogoAfiliados.setVisible(true);
+    }
+    
+    public void vistaDialogoAdherente(java.awt.Frame parent, boolean b, String nombrea, int numdoc, int codme, Connection connection) throws SQLException{
+        DialogoAdherente dialogoAdherente = new DialogoAdherente(parent, b, nombrea, numdoc, codme, connection);
+        dialogoAdherente.setVisible(true);
     }
 }

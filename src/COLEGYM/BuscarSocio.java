@@ -11,13 +11,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import util.Reflection;
+
 /**
  *
  * @author lperez
  */
 public class BuscarSocio extends javax.swing.JDialog {
 
-    public Connection connection = null;
+    public Connection connection5 = null;
     public DashboardColegym dashboard;
     public DialogoAfiliados dialogo;
     public int codme;
@@ -31,64 +32,22 @@ public class BuscarSocio extends javax.swing.JDialog {
         condicion = "";
         initComponents();
         txtBuscar.requestFocus();
-        this.connection = connection;
+        this.connection5 = connection;
         this.dialogo = dialogo;
     }
 
-    public void Condicion() {
-        if (rbNombre.isSelected()) {
-            bandera = 0;
-            condicion = "nombre";
-        }
-        if (rbMatricula.isSelected()) {
-            bandera = 0;
-            condicion = "matric";
-        }
-    }
-
     public void buscar() throws SQLException {
-        Conexion con = new Conexion();
         if (txtBuscar.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Campo vacío");
             txtBuscar.requestFocus();
         } else {
-            try {
-                Condicion();
-                if (bandera == 0) {
-                    String query = "SELECT codme, nombre FROM prestadores WHERE tsocio<=4 AND " + condicion + " LIKE '%" + txtBuscar.getText() + "%'";
-                    ArrayList arrayBuscar = new ArrayList();
-                    listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, con.GetConnectionCloud());
-                    if (listaMedicos.size() > 0) {
-                        getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No existe.");
-                    }
-                } else if (bandera == 1) {
-                    String query = "SELECT p.codme, p.nombre FROM prestadores p"
-                            + " LEFT JOIN especialidades e ON p.espe1 = e.esp_id OR p.espe2 = e.esp_id OR p.espe3 = e.esp_id"
-                            + " WHERE e.nombre LIKE '%" + txtBuscar.getText() + "%'";
-                    ArrayList arrayBuscar = new ArrayList();
-                    listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, con.GetConnectionCloud());
-                    if (listaMedicos.size() > 0) {
-                        getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
-                    } else {
-                        JOptionPane.showMessageDialog(null, "No existe.");
-                    }
-                } else {
-                    try {
-                        Condicion();
-                        String query = "SELECT * FROM cmt_cargador WHERE " + condicion + " LIKE '%" + txtBuscar.getText() + "%'";
-                        ArrayList arrayBuscar = new ArrayList();
-                        listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, con.GetConnectionCloud());
-                        if (listaMedicos.size() > 0) {
-                            getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
-                        } else {
-                            JOptionPane.showMessageDialog(null, "No existe.");
-                        }
-                    } catch (SQLException ex) {
-                    }
-                }
-            } catch (SQLException ex) {
+            String query = "SELECT codme, nombre FROM prestadores WHERE tsocio<=4 AND nombre LIKE '%" + txtBuscar.getText() + "%'";
+            ArrayList arrayBuscar = new ArrayList();
+            listaMedicos = Reflection.getMapQueryResultByPreparedStatement(query, arrayBuscar, connection5);
+            if (listaMedicos.size() > 0) {
+                getTblBuscar().setModel(new ModeloBuscar(listaMedicos));
+            } else {
+                JOptionPane.showMessageDialog(null, "No existe.");
             }
         }
     }
@@ -101,8 +60,6 @@ public class BuscarSocio extends javax.swing.JDialog {
         buttonGroup2 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        rbNombre = new javax.swing.JRadioButton();
-        rbMatricula = new javax.swing.JRadioButton();
         txtBuscar = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblBuscar = new javax.swing.JTable();
@@ -116,14 +73,7 @@ public class BuscarSocio extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Buscar"));
 
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Buscar por:");
-
-        buttonGroup2.add(rbNombre);
-        rbNombre.setSelected(true);
-        rbNombre.setText("Nombre");
-
-        buttonGroup2.add(rbMatricula);
-        rbMatricula.setText("Matrícula");
+        jLabel1.setText("Buscar por nombre");
 
         txtBuscar.setFont(new java.awt.Font("Dialog", 1, 12)); // NOI18N
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -157,23 +107,13 @@ public class BuscarSocio extends javax.swing.JDialog {
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(100, 100, 100)
-                .addComponent(rbNombre)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(rbMatricula)
-                .addGap(96, 96, 96))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(rbNombre)
-                    .addComponent(rbMatricula))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -235,6 +175,12 @@ public class BuscarSocio extends javax.swing.JDialog {
             dialogo.txtCodme.setText(codme + "");
             dialogo.txtNombre.setText(nombre.trim());
             dispose();
+            try {
+                dialogo.cargarSocio();
+            } catch (SQLException ex) {
+                Logger.getLogger(BuscarSocio.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
     }//GEN-LAST:event_tblBuscarMouseClicked
 
@@ -245,28 +191,9 @@ public class BuscarSocio extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JRadioButton rbMatricula;
-    private javax.swing.JRadioButton rbNombre;
     private javax.swing.JTable tblBuscar;
     private javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
-
-
-    public javax.swing.JRadioButton getRbMatricula() {
-        return rbMatricula;
-    }
-
-    public void setRbMatricula(javax.swing.JRadioButton rbMatricula) {
-        this.rbMatricula = rbMatricula;
-    }
-
-    public javax.swing.JRadioButton getRbNombre() {
-        return rbNombre;
-    }
-
-    public void setRbNombre(javax.swing.JRadioButton rbNombre) {
-        this.rbNombre = rbNombre;
-    }
 
     public javax.swing.JTable getTblBuscar() {
         return tblBuscar;

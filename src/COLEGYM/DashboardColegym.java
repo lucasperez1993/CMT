@@ -16,19 +16,22 @@ import javax.swing.JOptionPane;
 import javax.swing.table.TableColumnModel;
 import org.json.JSONObject;
 import util.Reflection;
+
 /**
  *
  * @author lperez
  */
 public class DashboardColegym extends javax.swing.JFrame {
+
     public Connection connectionVPS;
+    public Connection connection5;
     Login login;
     DialogoAfiliados dialogoAfiliados = new DialogoAfiliados(this, true);
     Conexion con = new Conexion();
     VistaControlador vistaControlador = new VistaControlador();
 
     public DashboardColegym(JSONObject permisJson) throws SQLException {
-        connectionVPS = con.GetConnectionVPS();
+        connection5 = con.GetConnection5();
         initComponents();
         lblUsuario.setText(Login.username);
         mostrarIngresosHoy();
@@ -36,18 +39,20 @@ public class DashboardColegym extends javax.swing.JFrame {
     }
 
     public void mostrarIngresosHoy() throws SQLException {
-        String sql = "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, a.nombre, i.fecha, i.numdoc "
+        String sql = "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) "
+                + "AS horaIngreso, a.nombre, i.fecha, i.numdoc "
                 + "FROM gym_ingresos i "
                 + "LEFT JOIN gym_adh_inscripto a ON i.numdoc = a.numdoc "
                 + "WHERE CONVERT(VARCHAR(10),fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND a.nombre IS NOT NULL "
                 + "UNION "
-                + "SELECT CONCAT(DATEPART(HOUR, i.fecha), ':',DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc "
+                + "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc "
                 + "FROM gym_ingresos i "
                 + "LEFT JOIN prestadores p ON p.numdoc = i.numdoc "
                 + "LEFT JOIN gym_med_inscripto m ON m.codme = p.codme "
-                + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
+                + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = "
+                + "CONVERT(VARCHAR(10),GETDATE(), 103) AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
         ArrayList arrayIng = new ArrayList();
-        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connectionVPS);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connection5);
         if (lista.size() > 0) {
             getTblIngresos().setModel(new ModeloIngresos(lista));
             TableColumnModel columnModel = tblIngresos.getColumnModel();
@@ -64,19 +69,20 @@ public class DashboardColegym extends javax.swing.JFrame {
                 + "AND MONTH(fecha) = MONTH(GETDATE()) AND YEAR(fecha) = YEAR(GETDATE())";
         ArrayList arrayExisteIngreso = new ArrayList();
         arrayExisteIngreso.add(numdoc);
-        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayExisteIngreso, connectionVPS);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayExisteIngreso, connection5);
         if (lista.size() > 0) {
             JOptionPane.showMessageDialog(null, "El afiliado ya fue ingresado.", "Mensaje del Sistema", 2);
+            txtDNI.requestFocus();
         } else {
             String sql2 = "SELECT numdoc, nombre FROM gym_adh_inscripto WHERE numdoc = ? AND estado = ?";
             ArrayList arrayExisteIngresoAdh = new ArrayList();
             arrayExisteIngresoAdh.add(numdoc);
             arrayExisteIngresoAdh.add(1);
-            List<Map<String, Object>> lista2 = Reflection.getMapQueryResultByPreparedStatement(sql2, arrayExisteIngresoAdh, connectionVPS);
+            List<Map<String, Object>> lista2 = Reflection.getMapQueryResultByPreparedStatement(sql2, arrayExisteIngresoAdh, connection5);
             if (lista2.size() > 0) {
                 String insert = "INSERT INTO gym_ingresos "
                         + "VALUES (" + numdoc + ", GETDATE())";
-                connectionVPS.createStatement().execute(insert);
+                connection5.createStatement().execute(insert);
                 mostrarIngresosHoy();
                 txtDNI.requestFocus();
             } else {
@@ -89,11 +95,11 @@ public class DashboardColegym extends javax.swing.JFrame {
                 arrayExisteIngresoSoc.add(75000);
                 arrayExisteIngresoSoc.add(0);
                 arrayExisteIngresoSoc.add(1);
-                List<Map<String, Object>> lista3 = Reflection.getMapQueryResultByPreparedStatement(sql3, arrayExisteIngresoSoc, connectionVPS);
+                List<Map<String, Object>> lista3 = Reflection.getMapQueryResultByPreparedStatement(sql3, arrayExisteIngresoSoc, connection5);
                 if (lista3.size() > 0) {
                     String insert = "INSERT INTO gym_ingresos "
                             + "VALUES (" + numdoc + ", GETDATE())";
-                    connectionVPS.createStatement().execute(insert);
+                    connection5.createStatement().execute(insert);
                     mostrarIngresosHoy();
                     txtDNI.requestFocus();
                 } else {
@@ -122,11 +128,11 @@ public class DashboardColegym extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btnSalir = new javax.swing.JButton();
         btnRutinas = new javax.swing.JButton();
-        btnBuscar = new javax.swing.JButton();
         btnGrupoFamiliar = new javax.swing.JButton();
         btnAfiliados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("COLEGYM");
         setResizable(false);
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
@@ -253,14 +259,6 @@ public class DashboardColegym extends javax.swing.JFrame {
         btnRutinas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/capacitacion (1).png"))); // NOI18N
         btnRutinas.setToolTipText("Rutinas");
 
-        btnBuscar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/searchbtn.png"))); // NOI18N
-        btnBuscar.setToolTipText("Buscar Afiliado");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
-            }
-        });
-
         btnGrupoFamiliar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/relations_1.png"))); // NOI18N
         btnGrupoFamiliar.setToolTipText("Grupo Familiar");
         btnGrupoFamiliar.addActionListener(new java.awt.event.ActionListener() {
@@ -288,8 +286,6 @@ public class DashboardColegym extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGrupoFamiliar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnBuscar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRutinas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnSalir)
@@ -303,7 +299,6 @@ public class DashboardColegym extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRutinas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnGrupoFamiliar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAfiliados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -368,10 +363,6 @@ public class DashboardColegym extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDNIKeyPressed
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        vistaControlador.vistaBuscarSocioColegym(this, true, dialogoAfiliados, connectionVPS);
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
     private void btnGrupoFamiliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrupoFamiliarActionPerformed
         vistaControlador.vistaDialogoGrupoFamiliar(this, true);
     }//GEN-LAST:event_btnGrupoFamiliarActionPerformed
@@ -380,10 +371,9 @@ public class DashboardColegym extends javax.swing.JFrame {
         vistaControlador.vistaDialogoAfiliados(this, true);
     }//GEN-LAST:event_btnAfiliadosActionPerformed
 
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAfiliados;
-    private javax.swing.JButton btnBuscar;
     private javax.swing.JButton btnGrupoFamiliar;
     private javax.swing.JButton btnMarcar;
     private javax.swing.JButton btnRutinas;
