@@ -1,6 +1,7 @@
 package COLEGYM;
 
 import Conexion.Conexion;
+import Controller.VistaControlador;
 import Models.ModeloGrupoFamiliar;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
@@ -21,6 +22,8 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
 
     public Connection connection5;
     Conexion con = new Conexion();
+    VistaControlador vistaControlador = new VistaControlador();
+    DashboardColegym dashboardColegym;
 
     public DialogoGrupoFamiliar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -197,13 +200,9 @@ public class DialogoGrupoFamiliar extends javax.swing.JDialog {
         if (txtCodme.getText().equals("")) {
             JOptionPane.showMessageDialog(null, "Campo vacío");
         } else {
-            try {
-                cargarGrupoFamiliar();
-                txtCodme.setText("");
-                txtCodme.requestFocus();
-            } catch (SQLException ex) {
-                Logger.getLogger(DialogoGrupoFamiliar.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            //cargarGrupoFamiliar();
+            txtCodme.setText("");
+            txtCodme.requestFocus();
         }
     }//GEN-LAST:event_btnBuscarActionPerformed
 

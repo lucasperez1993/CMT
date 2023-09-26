@@ -45,7 +45,6 @@ public class GuiaMedica extends javax.swing.JDialog {
         }
         if (accion) {
             JOptionPane.showMessageDialog(null, "Se ha agregado a la guía médica.");
-            dispose();
         }
         else {
             JOptionPane.showMessageDialog(null, "No se pudo agregar a la guía médica.");

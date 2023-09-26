@@ -60,9 +60,11 @@ public class DialogoAfiliados extends javax.swing.JDialog {
             } else {
                 rbNo.setSelected(true);
             }
-            if (estado != 1 || estado != 5) {
+            if (estado == 1) {
                 bandera = false;
-                JOptionPane.showMessageDialog(null, "Médico no inscripto.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            } else if (estado == 5) {
+                bandera = false;
+                JOptionPane.showMessageDialog(null, "ESTADO: " + lista.get(0).get(".tipo").toString().trim() + "", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 bandera = true;
             }

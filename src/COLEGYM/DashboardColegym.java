@@ -128,7 +128,6 @@ public class DashboardColegym extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         btnSalir = new javax.swing.JButton();
         btnRutinas = new javax.swing.JButton();
-        btnGrupoFamiliar = new javax.swing.JButton();
         btnAfiliados = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -140,6 +139,11 @@ public class DashboardColegym extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Marcar ingreso"));
 
+        txtDNI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtDNIActionPerformed(evt);
+            }
+        });
         txtDNI.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtDNIKeyPressed(evt);
@@ -258,12 +262,9 @@ public class DashboardColegym extends javax.swing.JFrame {
 
         btnRutinas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/capacitacion (1).png"))); // NOI18N
         btnRutinas.setToolTipText("Rutinas");
-
-        btnGrupoFamiliar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/relations_1.png"))); // NOI18N
-        btnGrupoFamiliar.setToolTipText("Grupo Familiar");
-        btnGrupoFamiliar.addActionListener(new java.awt.event.ActionListener() {
+        btnRutinas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGrupoFamiliarActionPerformed(evt);
+                btnRutinasActionPerformed(evt);
             }
         });
 
@@ -283,11 +284,9 @@ public class DashboardColegym extends javax.swing.JFrame {
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnAfiliados)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGrupoFamiliar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnRutinas)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnSalir)
                 .addContainerGap())
         );
@@ -299,7 +298,6 @@ public class DashboardColegym extends javax.swing.JFrame {
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRutinas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGrupoFamiliar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAfiliados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -351,7 +349,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             try {
                 if (txtDNI.getText().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", 1);
+                    JOptionPane.showMessageDialog(null, "Ingrese un D.N.I.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
                     txtDNI.requestFocus();
                 } else {
                     insertIngreso();
@@ -363,18 +361,21 @@ public class DashboardColegym extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDNIKeyPressed
 
-    private void btnGrupoFamiliarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGrupoFamiliarActionPerformed
-        vistaControlador.vistaDialogoGrupoFamiliar(this, true);
-    }//GEN-LAST:event_btnGrupoFamiliarActionPerformed
-
     private void btnAfiliadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAfiliadosActionPerformed
         vistaControlador.vistaDialogoAfiliados(this, true);
     }//GEN-LAST:event_btnAfiliadosActionPerformed
 
+    private void txtDNIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDNIActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtDNIActionPerformed
+
+    private void btnRutinasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRutinasActionPerformed
+        vistaControlador.vistaDialogoRutina(this, true, connection5);
+    }//GEN-LAST:event_btnRutinasActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAfiliados;
-    private javax.swing.JButton btnGrupoFamiliar;
     private javax.swing.JButton btnMarcar;
     private javax.swing.JButton btnRutinas;
     private javax.swing.JButton btnSalir;

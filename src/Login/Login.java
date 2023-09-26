@@ -36,10 +36,10 @@ public class Login extends javax.swing.JFrame {
 
     public void esUsuario() throws SQLException, JSONException {
         try {
-            final PreparedStatement ps = this.connection.prepareStatement("SELECT * FROM cmt_usuarios_java WHERE usuario = ? AND clave = ?");
-            ps.setObject(1, this.txtUser.getText());
-            ps.setObject(2, this.txtClave.getText());
-            final ResultSet rs = ps.executeQuery();
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM cmt_usuarios_java WHERE usuario = ? AND clave = ?");
+            ps.setObject(1, txtUser.getText());
+            ps.setObject(2, txtClave.getText());
+            ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 username = rs.getString(2);
                 user = rs.getString(3);

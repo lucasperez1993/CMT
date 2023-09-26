@@ -6,6 +6,7 @@ import COLEGYM.DashboardColegym;
 import COLEGYM.DialogoAdherente;
 import COLEGYM.DialogoAfiliados;
 import COLEGYM.DialogoGrupoFamiliar;
+import COLEGYM.DialogoRutina;
 import Login.Login;
 import MDA.Buscar;
 import MDA.CambiarClave;
@@ -128,5 +129,10 @@ public class VistaControlador {
     public void vistaDialogoAdherente(java.awt.Frame parent, boolean b, String nombrea, int numdoc, int codme, Connection connection) throws SQLException{
         DialogoAdherente dialogoAdherente = new DialogoAdherente(parent, b, nombrea, numdoc, codme, connection);
         dialogoAdherente.setVisible(true);
+    }
+    
+    public void vistaDialogoRutina(java.awt.Frame parent, boolean b, Connection connection){
+        DialogoRutina dialogoRutina = new DialogoRutina(parent, b, connection);
+        dialogoRutina.setVisible(true);
     }
 }

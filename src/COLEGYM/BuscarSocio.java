@@ -160,10 +160,14 @@ public class BuscarSocio extends javax.swing.JDialog {
 
     private void txtBuscarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyPressed
         if (evt.getKeyCode() == 10) {
-            try {
-                buscar();
-            } catch (SQLException ex) {
-                Logger.getLogger(BuscarSocio.class.getName()).log(Level.SEVERE, null, ex);
+            if (txtBuscar.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Ingrese N° de Socio." , "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                try {
+                    buscar();
+                } catch (SQLException ex) {
+                    Logger.getLogger(BuscarSocio.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }//GEN-LAST:event_txtBuscarKeyPressed
@@ -180,7 +184,7 @@ public class BuscarSocio extends javax.swing.JDialog {
             } catch (SQLException ex) {
                 Logger.getLogger(BuscarSocio.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         }
     }//GEN-LAST:event_tblBuscarMouseClicked
 
