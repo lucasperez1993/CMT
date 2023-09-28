@@ -20,45 +20,63 @@ import util.Reflection;
 public class DialogoRutina extends javax.swing.JDialog {
 
     public Connection connection5;
+    public boolean banderaSoc;
+    public boolean banderaAdh;
 
     public DialogoRutina(java.awt.Frame parent, boolean modal, Connection connection) {
         super(parent, modal);
         this.connection5 = connection;
         initComponents();
         txtDNISocio.requestFocus();
+        banderaAdh = false;
+        banderaSoc = false;
     }
 
     public void cargarRutinaAdh() throws SQLException {
         String numdoc = txtDNIAdh.getText();
-        PreparedStatement ps = connection5.prepareStatement("SELECT r.id_rutina, r.rutina, a.nombre, r.numdoc "
-                + "FROM gym_rutinas r "
-                + "LEFT JOIN gym_adh_inscripto a ON r.numdoc = a.numdoc "
-                + "WHERE r.numdoc = ?");
-        ps.setObject(1, numdoc);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            txtRutinaAdh.setText(rs.getString(2));
-            txtNombreAdh.setText(rs.getString(3));
-            btnGuardarAdh.setEnabled(true);
+        if (!existeAdhInscripto(Integer.valueOf(numdoc))) {
+            JOptionPane.showMessageDialog(null, "El afiliado no se encuentra activo.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "Ingrese un D.N.I. válido.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            PreparedStatement ps = connection5.prepareStatement("SELECT r.id_rutina, r.rutina, a.nombre, r.numdoc "
+                    + "FROM gym_rutinas r "
+                    + "LEFT JOIN gym_adh_inscripto a ON r.numdoc = a.numdoc "
+                    + "WHERE r.numdoc = ? AND a.numdoc = ?");
+            ps.setObject(1, numdoc);
+            ps.setObject(2, numdoc);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                txtRutinaAdh.setText(rs.getString(2));
+                btnGuardarAdh.setEnabled(true);
+                banderaAdh = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Nueva rutina.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+                banderaAdh = false;
+            }
         }
     }
-    
+
     public void cargarRutinaSoc() throws SQLException {
         String numdoc = txtDNISocio.getText();
-        PreparedStatement ps = connection5.prepareStatement("SELECT r.id_rutina, r.rutina, a.nombre, r.numdoc "
-                + "FROM gym_rutinas r "
-                + "LEFT JOIN gym_adh_inscripto a ON r.numdoc = a.numdoc "
-                + "WHERE r.numdoc = ?");
-        ps.setObject(1, numdoc);
-        ResultSet rs = ps.executeQuery();
-        if (rs.next()) {
-            txtRutinaSocio.setText(rs.getString(2));
-            txtNombreSocio.setText(rs.getString(3));
-            btnGuardarAdh.setEnabled(true);
+        if (!existeSocioInscripto(Integer.valueOf(numdoc))) {
+            JOptionPane.showMessageDialog(null, "El afiliado no se encuentra activo.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(null, "Ingrese un D.N.I. válido.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            System.out.println(existeSocioInscripto(Integer.valueOf(numdoc)));
+            PreparedStatement ps = connection5.prepareStatement("SELECT r.id_rutina, r.rutina, p.nombre, r.numdoc "
+                + "FROM gym_rutinas r "
+                + "LEFT JOIN prestadores p ON r.numdoc = p.numdoc "
+                + "LEFT JOIN gym_med_inscripto a ON a.codme = p.codme "
+                + "WHERE r.numdoc = ? AND p.numdoc = ?");
+            ps.setObject(1, numdoc);
+            ps.setObject(2, numdoc);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                txtRutinaSocio.setText(rs.getString(2));
+                btnGuardarSoc.setEnabled(true);
+                banderaSoc = true;
+            } else {
+                JOptionPane.showMessageDialog(null, "Nueva rutina.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+                banderaSoc = false;
+            }
         }
     }
 
@@ -72,6 +90,42 @@ public class DialogoRutina extends javax.swing.JDialog {
         txtNombreAdh.setText("");
         btnGuardarAdh.setEnabled(false);
         btnGuardarSoc.setEnabled(false);
+        banderaAdh = false;
+        banderaSoc = false;
+    }
+
+    public boolean existeSocioInscripto(int numdoc) throws SQLException {
+        String sql = "SELECT p.nombre, p.numdoc FROM gym_med_inscripto m "
+                + "LEFT JOIN prestadores p ON m.codme = p.codme "
+                + "WHERE p.numdoc = ? AND m.estado = ?";
+        ArrayList existeSocioInscripto = new ArrayList();
+        existeSocioInscripto.add(numdoc);
+        existeSocioInscripto.add(1);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, existeSocioInscripto, connection5);
+        if(lista.size() > 0){
+            txtNombreSocio.setText(lista.get(0).get(".nombre").toString().trim());
+            txtDNISocio.setText(lista.get(0).get(".numdoc").toString().trim());
+            btnGuardarSoc.setEnabled(true);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public boolean existeAdhInscripto(int numdoc) throws SQLException {
+        String sql = "SELECT * FROM gym_adh_inscripto WHERE numdoc = ? AND estado = ?";
+        ArrayList existeAdhInscripto = new ArrayList();
+        existeAdhInscripto.add(numdoc);
+        existeAdhInscripto.add(1);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, existeAdhInscripto, connection5);
+        if(lista.size() > 0){
+            txtNombreAdh.setText(lista.get(0).get(".nombre").toString().trim());
+            txtDNIAdh.setText(lista.get(0).get(".numdoc").toString().trim());
+            btnGuardarAdh.setEnabled(true);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -177,6 +231,11 @@ public class DialogoRutina extends javax.swing.JDialog {
 
         btnGuardarSoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/save.png"))); // NOI18N
         btnGuardarSoc.setEnabled(false);
+        btnGuardarSoc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarSocActionPerformed(evt);
+            }
+        });
 
         btnLimpiar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sweep.png"))); // NOI18N
         btnLimpiar1.addActionListener(new java.awt.event.ActionListener() {
@@ -299,6 +358,11 @@ public class DialogoRutina extends javax.swing.JDialog {
 
         btnGuardarAdh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/save.png"))); // NOI18N
         btnGuardarAdh.setEnabled(false);
+        btnGuardarAdh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGuardarAdhActionPerformed(evt);
+            }
+        });
 
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/arrow-left_1.png"))); // NOI18N
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -439,6 +503,57 @@ public class DialogoRutina extends javax.swing.JDialog {
         limpiarCampos();
     }//GEN-LAST:event_btnLimpiar1ActionPerformed
 
+    private void btnGuardarSocActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarSocActionPerformed
+        String rutina = txtRutinaSocio.getText();
+        int numdoc = Integer.valueOf(txtDNISocio.getText());
+        if (rutina.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El campo rutina no puede estar vacío.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (!banderaSoc) {
+                insertRutina(rutina, numdoc);
+            } else {
+                updateRutina(rutina, numdoc);
+            }
+        }
+
+    }//GEN-LAST:event_btnGuardarSocActionPerformed
+
+    private void btnGuardarAdhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarAdhActionPerformed
+        String rutina = txtRutinaAdh.getText();
+        int numdoc = Integer.valueOf(txtDNIAdh.getText());
+        if (rutina.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "El campo rutina no puede estar vacío.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+        } else {
+            if (!banderaAdh) {
+                insertRutina(rutina, numdoc);
+            } else {
+                updateRutina(rutina, numdoc);
+            }
+        }
+    }//GEN-LAST:event_btnGuardarAdhActionPerformed
+
+    public void insertRutina(String rutina, int numdoc) {
+        String insert = "INSERT INTO gym_rutinas "
+                + "VALUES ('" + rutina + "', " + numdoc + ")";
+        try {
+            connection5.createStatement().execute(insert);
+            JOptionPane.showMessageDialog(null, "Rutina guardada.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(DialogoRutina.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public void updateRutina(String rutina, int numdoc) {
+        String update = "UPDATE gym_rutinas SET rutina = '" + rutina + "' WHERE numdoc = " + numdoc + "";
+        try {
+            connection5.createStatement().execute(update);
+            JOptionPane.showMessageDialog(null, "Rutina modificada.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            Logger.getLogger(DialogoRutina.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardarAdh;

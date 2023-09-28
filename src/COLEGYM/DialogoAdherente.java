@@ -71,34 +71,39 @@ public class DialogoAdherente extends javax.swing.JDialog {
     }
 
     public void guardarDatos() throws SQLException {
-        if (!esNuevoIngreso) {
-            try {
-                dateFormat();
-                fichaMedica();
-                String update = "UPDATE gym_adh_inscripto "
-                        + "SET mail = '" + txtMail.getText() + "', "
-                        + "tecel = " + txtCelular.getText() + ", "
-                        + "fchnac = '" + fechanac + "', "
-                        + "fichamed = " + fichaMed + " "
-                        + "WHERE numdoc = "+numdoc+"";
-                connection5.createStatement().execute(update);
-                JOptionPane.showMessageDialog(null, "Datos modificados.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
-                System.out.println(e);
-            }
+        if (txtMail.getText().isEmpty() || txtCelular.getText().isEmpty() || fechanac.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Todos los campos deben ser completados", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
         } else {
-            try {
-                dateFormat();
-                fichaMedica();
-                String insert = "INSERT INTO gym_adh_inscripto "
-                        + "VALUES (" + numdoc + ", '" + nombrea + "', '" + txtMail.getText() + "', "
-                        + "" + txtCelular.getText() + ", '" + fechanac + "', 0, " + fichaMed + ", 0, " + codme + ", 5)";
-                connection5.createStatement().execute(insert);
-                JOptionPane.showMessageDialog(null, "Adherente inscripto.", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
-                this.dispose();
-            } catch (Exception e) {
-                System.out.println(e);
-                JOptionPane.showMessageDialog(null, "Ocurrió un problema, por favor, contacte al administrador del sistema.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            if (!esNuevoIngreso) {
+
+                try {
+                    dateFormat();
+                    fichaMedica();
+                    String update = "UPDATE gym_adh_inscripto "
+                            + "SET mail = '" + txtMail.getText() + "', "
+                            + "tecel = " + txtCelular.getText() + ", "
+                            + "fchnac = '" + fechanac + "', "
+                            + "fichamed = " + fichaMed + " "
+                            + "WHERE numdoc = " + numdoc + "";
+                    connection5.createStatement().execute(update);
+                    JOptionPane.showMessageDialog(null, "Datos modificados.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            } else {
+                try {
+                    dateFormat();
+                    fichaMedica();
+                    String insert = "INSERT INTO gym_adh_inscripto "
+                            + "VALUES (" + numdoc + ", '" + nombrea + "', '" + txtMail.getText() + "', "
+                            + "" + txtCelular.getText() + ", '" + fechanac + "', 0, " + fichaMed + ", 0, " + codme + ", 5)";
+                    connection5.createStatement().execute(insert);
+                    JOptionPane.showMessageDialog(null, "Adherente inscripto.", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
+                    this.dispose();
+                } catch (Exception e) {
+                    System.out.println(e);
+                    JOptionPane.showMessageDialog(null, "Ocurrió un problema, por favor, contacte al administrador del sistema.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
