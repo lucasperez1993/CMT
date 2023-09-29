@@ -12,7 +12,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import javax.swing.table.TableModel;
+import util.Deuda;
 import util.Reflection;
 
 /**
@@ -28,6 +31,7 @@ public class DialogoAfiliados extends javax.swing.JDialog {
     public boolean bandera;
     public Connection connection5;
     Conexion con = new Conexion();
+    Deuda deuda = new Deuda();
     public List<Map<String, Object>> listaGrupoFamiliar;
 
     public DialogoAfiliados(java.awt.Frame parent, boolean modal) {
@@ -40,42 +44,47 @@ public class DialogoAfiliados extends javax.swing.JDialog {
     }
 
     public void cargarSocio() throws SQLException {
-        fichaMedica();
         int codme = Integer.valueOf(txtCodme.getText());
-        String sql = "SELECT p.pre_id, p.codme, p.nombre, ISNULL(e.tipo, 'No inscripto') as tipo, ISNULL(i.estado, 0) as estado, ISNULL(i.fichamed, 0) as fichamed "
-                + "FROM prestadores p "
-                + "LEFT JOIN gym_med_inscripto i ON p.codme=i.codme "
-                + "LEFT JOIN gym_estados e ON i.estado=e.estado "
-                + "WHERE p.codme = ? AND p.codme <= 75000 AND p.tsocio <= ? AND p.entidad = ?";
-        ArrayList arraySocio = new ArrayList();
-        arraySocio.add(codme);
-        arraySocio.add(4);
-        arraySocio.add(0);
-        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arraySocio, connection5);
-        if (lista.size() > 0) {
-            int estado = Integer.valueOf(lista.get(0).get(".estado").toString().trim());
-            fichaMed = Integer.valueOf(lista.get(0).get(".fichamed").toString());
-            if (fichaMed == 1) {
-                rbSi.setSelected(true);
+        if (!deuda.tieneDeuda(codme, connection5)) {
+            fichaMedica();
+            String sql = "SELECT p.pre_id, p.codme, p.nombre, ISNULL(e.tipo, 'No inscripto') as tipo, ISNULL(i.estado, 0) as estado, ISNULL(i.fichamed, 0) as fichamed "
+                    + "FROM prestadores p "
+                    + "LEFT JOIN gym_med_inscripto i ON p.codme=i.codme "
+                    + "LEFT JOIN gym_estados e ON i.estado=e.estado "
+                    + "WHERE p.codme = ? AND p.codme <= 75000 AND p.tsocio <= ? AND p.entidad = ?";
+            ArrayList arraySocio = new ArrayList();
+            arraySocio.add(codme);
+            arraySocio.add(4);
+            arraySocio.add(0);
+            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arraySocio, connection5);
+            if (lista.size() > 0) {
+                int estado = Integer.valueOf(lista.get(0).get(".estado").toString().trim());
+                fichaMed = Integer.valueOf(lista.get(0).get(".fichamed").toString().trim());
+                if (fichaMed == 1) {
+                    rbSi.setSelected(true);
+                } else {
+                    rbNo.setSelected(true);
+                }
+                if (estado == 1) {
+                    bandera = false;
+                } else if (estado == 5) {
+                    bandera = false;
+                    JOptionPane.showMessageDialog(null, "ESTADO: " + lista.get(0).get(".tipo").toString().trim() + "", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    bandera = true;
+                }
+                lblCodme.setText(txtCodme.getText());
+                lblNombre.setText(lista.get(0).get(".nombre").toString().trim());
+                txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
+                lblEstadoSocio.setText(lista.get(0).get(".tipo").toString().trim());
+                cargarGrupoFamiliar(codme);
             } else {
-                rbNo.setSelected(true);
+                JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
             }
-            if (estado == 1) {
-                bandera = false;
-            } else if (estado == 5) {
-                bandera = false;
-                JOptionPane.showMessageDialog(null, "ESTADO: " + lista.get(0).get(".tipo").toString().trim() + "", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
-            } else {
-                bandera = true;
-            }
-            lblCodme.setText(txtCodme.getText());
-            lblNombre.setText(lista.get(0).get(".nombre").toString().trim());
-            txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
-            lblEstadoSocio.setText(lista.get(0).get(".tipo").toString().trim());
-            cargarGrupoFamiliar(codme);
         } else {
-            JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El socio posee deuda. Debe regularizar su situación en Dpto. Contaduría.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
         }
+
     }
 
     public void cargarGrupoFamiliar(int codme) throws SQLException {
@@ -90,7 +99,9 @@ public class DialogoAfiliados extends javax.swing.JDialog {
             getTblGrupoFamiliar().setModel(new ModeloGrupoFamiliar(listaGrupoFamiliar));
             TableColumnModel columnModel = tblGrupoFamiliar.getColumnModel();
         } else {
-            JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", 0);
+            JOptionPane.showMessageDialog(null, "No posee datos para el Grupo Familiar.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            TableModel newModel = new DefaultTableModel();
+            tblGrupoFamiliar.setModel(newModel);
         }
     }
 
@@ -489,7 +500,7 @@ public class DialogoAfiliados extends javax.swing.JDialog {
                 Object valorString = tblGrupoFamiliar.getValueAt(filaSeleccionada, columnaSeleccionada2);
                 if (valor != null && valor instanceof Number && ((Number) valor).intValue() != 0) {
                     int num = ((Number) valor).intValue();
-                    String nombrea = valorString.toString();
+                    String nombrea = valorString.toString().trim();
                     try {
                         vistaControlador.vistaDialogoAdherente(dashboardColegym, true, nombrea, num, codme, connection5);
                     } catch (SQLException ex) {
