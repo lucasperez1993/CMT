@@ -250,7 +250,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/Logo Colegio chico.png"))); // NOI18N
 
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/offlog.png"))); // NOI18N
-        btnSalir.setToolTipText("Salir");
+        btnSalir.setToolTipText("SALIR");
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalirActionPerformed(evt);
@@ -258,7 +258,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         });
 
         btnRutinas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/capacitacion (1).png"))); // NOI18N
-        btnRutinas.setToolTipText("Rutinas");
+        btnRutinas.setToolTipText("RUTINAS");
         btnRutinas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRutinasActionPerformed(evt);
@@ -266,6 +266,7 @@ public class DashboardColegym extends javax.swing.JFrame {
         });
 
         btnAfiliados.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/add-user.png"))); // NOI18N
+        btnAfiliados.setToolTipText("GESTIÓN DE AFILIADOS");
         btnAfiliados.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAfiliadosActionPerformed(evt);

@@ -223,6 +223,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         jScrollPane1.setViewportView(txtRutinaSocio);
 
         btnSalir1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/arrow-left_1.png"))); // NOI18N
+        btnSalir1.setToolTipText("Volver");
         btnSalir1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalir1ActionPerformed(evt);
@@ -230,6 +231,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         });
 
         btnGuardarSoc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/save.png"))); // NOI18N
+        btnGuardarSoc.setToolTipText("Guardar");
         btnGuardarSoc.setEnabled(false);
         btnGuardarSoc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -238,6 +240,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         });
 
         btnLimpiar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sweep.png"))); // NOI18N
+        btnLimpiar1.setToolTipText("Limpiar Campos");
         btnLimpiar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLimpiar1ActionPerformed(evt);
@@ -350,6 +353,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         jScrollPane2.setViewportView(txtRutinaAdh);
 
         btnLimpiar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/sweep.png"))); // NOI18N
+        btnLimpiar.setToolTipText("Limpiar Campos");
         btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnLimpiarActionPerformed(evt);
@@ -357,6 +361,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         });
 
         btnGuardarAdh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/save.png"))); // NOI18N
+        btnGuardarAdh.setToolTipText("Guardar");
         btnGuardarAdh.setEnabled(false);
         btnGuardarAdh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -365,6 +370,7 @@ public class DialogoRutina extends javax.swing.JDialog {
         });
 
         btnSalir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/arrow-left_1.png"))); // NOI18N
+        btnSalir.setToolTipText("Volver");
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalirActionPerformed(evt);
