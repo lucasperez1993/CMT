@@ -326,6 +326,7 @@ public class Dashboard extends javax.swing.JFrame {
 
     public void crearCarpetaMesa() {
         File directorio = new File("C:/Mesa de Ayuda/");
+        //File directorio = new File("Z:/PUREBA");
         try {
             if (!directorio.exists()) {
                 if (directorio.mkdirs()) {

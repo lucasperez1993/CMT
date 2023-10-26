@@ -71,11 +71,10 @@ public class DialogoAdherente extends javax.swing.JDialog {
     }
 
     public void guardarDatos() throws SQLException {
-        if (txtMail.getText().isEmpty() || txtCelular.getText().isEmpty() || fechanac.isEmpty()) {
+        if (txtMail.getText().isEmpty() || txtCelular.getText().isEmpty() || txtFecNac.getDate().toString().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Todos los campos deben ser completados", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
         } else {
             if (!esNuevoIngreso) {
-
                 try {
                     dateFormat();
                     fichaMedica();
@@ -94,7 +93,7 @@ public class DialogoAdherente extends javax.swing.JDialog {
                 try {
                     dateFormat();
                     fichaMedica();
-                    String insert = "INSERT INTO gym_adh_inscripto "
+                    String insert = "INSERT INTO gym_adh_inscripto (numdoc, nombre, mail, tecel, fchnac, tipopago, fichamed, arancel, codme, estado)"
                             + "VALUES (" + numdoc + ", '" + nombrea + "', '" + txtMail.getText() + "', "
                             + "" + txtCelular.getText() + ", '" + fechanac + "', 0, " + fichaMed + ", 0, " + codme + ", 5)";
                     connection5.createStatement().execute(insert);

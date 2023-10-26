@@ -7,7 +7,10 @@ import Models.ModeloIngresos;
 import java.awt.event.KeyEvent;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -15,8 +18,8 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.TableColumnModel;
 import org.json.JSONObject;
+import util.Deuda;
 import util.Reflection;
-
 /**
  *
  * @author lperez
@@ -29,6 +32,7 @@ public class DashboardColegym extends javax.swing.JFrame {
     DialogoAfiliados dialogoAfiliados = new DialogoAfiliados(this, true);
     Conexion con = new Conexion();
     VistaControlador vistaControlador = new VistaControlador();
+    Deuda deuda = new Deuda();
 
     public DashboardColegym(JSONObject permisJson) throws SQLException {
         connection5 = con.GetConnection5();
@@ -36,34 +40,60 @@ public class DashboardColegym extends javax.swing.JFrame {
         lblUsuario.setText(Login.username);
         mostrarIngresosHoy();
         txtDNI.requestFocus();
+        //JOptionPane.showMessageDialog(null, "AYUDA, TENGO SUEÑO 'O_-", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
     }
 
-    public void mostrarIngresosHoy() throws SQLException {
-        String sql = "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) "
-                + "AS horaIngreso, a.nombre, i.fecha, i.numdoc "
-                + "FROM gym_ingresos i "
-                + "LEFT JOIN gym_adh_inscripto a ON i.numdoc = a.numdoc "
-                + "WHERE CONVERT(VARCHAR(10),fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND a.nombre IS NOT NULL "
-                + "UNION "
-                + "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc "
-                + "FROM gym_ingresos i "
-                + "LEFT JOIN prestadores p ON p.numdoc = i.numdoc "
-                + "LEFT JOIN gym_med_inscripto m ON m.codme = p.codme "
-                + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = "
-                + "CONVERT(VARCHAR(10),GETDATE(), 103) AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
-        ArrayList arrayIng = new ArrayList();
-        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connection5);
-        if (lista.size() > 0) {
-            getTblIngresos().setModel(new ModeloIngresos(lista));
-            TableColumnModel columnModel = tblIngresos.getColumnModel();
-            columnModel.getColumn(0).setPreferredWidth(300);
-        } else {
-            System.out.println("No hay ingresos");
+    public void mostrarIngresosHoy() {
+        try {
+            String sql = "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) "
+                    + "AS horaIngreso, a.nombre, i.fecha, i.numdoc "
+                    + "FROM gym_ingresos i "
+                    + "LEFT JOIN gym_adh_inscripto a ON i.numdoc = a.numdoc "
+                    + "WHERE CONVERT(VARCHAR(10),fecha, 103) = CONVERT(VARCHAR(10),GETDATE(), 103) AND a.nombre IS NOT NULL "
+                    + "UNION "
+                    + "SELECT CONVERT(VARCHAR(2), DATEPART(HOUR, i.fecha)) + ':' + CONVERT(VARCHAR(2), DATEPART(MINUTE, i.fecha)) AS horaIngreso, p.nombre, i.fecha, i.numdoc "
+                    + "FROM gym_ingresos i "
+                    + "LEFT JOIN prestadores p ON p.numdoc = i.numdoc "
+                    + "LEFT JOIN gym_med_inscripto m ON m.codme = p.codme "
+                    + "WHERE CONVERT(VARCHAR(10),i.fecha, 103) = "
+                    + "CONVERT(VARCHAR(10),GETDATE(), 103) AND p.tsocio <= 4 AND p.entidad = 0 AND p.nombre IS NOT NULL ORDER BY i.fecha DESC";
+            ArrayList arrayIng = new ArrayList();
+            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayIng, connection5);
+            if (lista.size() > 0) {
+                getTblIngresos().setModel(new ModeloIngresos(lista));
+                TableColumnModel columnModel = tblIngresos.getColumnModel();
+                columnModel.getColumn(0).setPreferredWidth(300);
+            } else {
+                System.out.println("No hay ingresos");
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
+    public void getVencimiento(int numdoc) throws SQLException, ParseException{
+        String sql = "SELECT TOP 1 fechavto, fechapago FROM gym_movimi WHERE numdoc = ? ORDER BY fechavto DESC";
+        ArrayList arrayVto = new ArrayList() {};
+        arrayVto.add(numdoc);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayVto, connection5);
+        if(lista.size() > 0){
+            SimpleDateFormat sdfEntrada = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date fechaVto = sdfEntrada.parse(lista.get(0).get(".fechavto").toString());
+            SimpleDateFormat sdfSalida  = new SimpleDateFormat("dd/MM/yyyy");
+            String fechaVtoF = sdfSalida.format(fechaVto);
+            Date fechaPago = sdfEntrada.parse(lista.get(0).get(".fechapago").toString());
+            String fechaPagoF = sdfSalida.format(fechaPago);
+            JOptionPane.showMessageDialog(null, "Ultimo pago: "+fechaPagoF+" \n Vencimiento: "+fechaVtoF+"","Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        }else{
+            JOptionPane.showMessageDialog(null, "Ultimo pago: SIN REGISTRO. \n Vencimiento: SIN REGISTRO.","Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
+    
     public void insertIngreso() throws SQLException {
         String numdoc = txtDNI.getText();
+        if(deuda.tieneDeudaPorIngreso(Integer.valueOf(numdoc), connection5)){
+            JOptionPane.showMessageDialog(null, "El Socio titular presenta DEUDA.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+        }
         String sql = "SELECT numdoc FROM gym_ingresos "
                 + "WHERE numdoc = ? AND DAY(fecha) = DAY(GETDATE()) "
                 + "AND MONTH(fecha) = MONTH(GETDATE()) AND YEAR(fecha) = YEAR(GETDATE())";
@@ -192,6 +222,11 @@ public class DashboardColegym extends javax.swing.JFrame {
 
             }
         ));
+        tblIngresos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblIngresosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblIngresos);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -351,9 +386,12 @@ public class DashboardColegym extends javax.swing.JFrame {
                     txtDNI.requestFocus();
                 } else {
                     insertIngreso();
+                    getVencimiento(Integer.valueOf(txtDNI.getText()));
                     txtDNI.setText("");
                 }
             } catch (SQLException ex) {
+                Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ParseException ex) {
                 Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -371,6 +409,29 @@ public class DashboardColegym extends javax.swing.JFrame {
     private void btnRutinasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRutinasActionPerformed
         vistaControlador.vistaDialogoRutina(this, true, connection5);
     }//GEN-LAST:event_btnRutinasActionPerformed
+
+    private void tblIngresosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblIngresosMouseClicked
+        if (evt.getClickCount() == 2) {
+        int filaSeleccionada = tblIngresos.getSelectedRow();
+            int columnaSeleccionada = 1;
+            if (filaSeleccionada != -1) {
+                Object valor = tblIngresos.getValueAt(filaSeleccionada, columnaSeleccionada);
+                if (valor != null && valor instanceof Number && ((Number) valor).intValue() != 0) {
+                    int numdoc = ((Number) valor).intValue();
+                    try {
+                        getVencimiento(numdoc);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ParseException ex) {
+                        Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
+                } else {
+                    JOptionPane.showMessageDialog(null, "El adherente debe actualizar sus datos en Despacho.", "Mensaje del sistema", 2);
+                }
+            }
+        }
+    }//GEN-LAST:event_tblIngresosMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

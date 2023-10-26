@@ -45,52 +45,51 @@ public class DialogoAfiliados extends javax.swing.JDialog {
 
     public void cargarSocio() throws SQLException {
         int codme = Integer.valueOf(txtCodme.getText());
-        if (!deuda.tieneDeuda(codme, connection5)) {
-            fichaMedica();
-            String sql = "SELECT p.pre_id, p.codme, p.nombre, ISNULL(e.tipo, 'No inscripto') as tipo, ISNULL(i.estado, 0) as estado, ISNULL(i.fichamed, 0) as fichamed "
-                    + "FROM prestadores p "
-                    + "LEFT JOIN gym_med_inscripto i ON p.codme=i.codme "
-                    + "LEFT JOIN gym_estados e ON i.estado=e.estado "
-                    + "WHERE p.codme = ? AND p.codme <= 75000 AND p.tsocio <= ? AND p.entidad = ?";
-            ArrayList arraySocio = new ArrayList();
-            arraySocio.add(codme);
-            arraySocio.add(4);
-            arraySocio.add(0);
-            List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arraySocio, connection5);
-            if (lista.size() > 0) {
-                int estado = Integer.valueOf(lista.get(0).get(".estado").toString().trim());
-                fichaMed = Integer.valueOf(lista.get(0).get(".fichamed").toString().trim());
-                if (fichaMed == 1) {
-                    rbSi.setSelected(true);
-                } else {
-                    rbNo.setSelected(true);
-                }
-                if (estado == 1) {
-                    bandera = false;
-                } else if (estado == 5) {
-                    bandera = false;
-                    JOptionPane.showMessageDialog(null, "ESTADO: " + lista.get(0).get(".tipo").toString().trim() + "", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    bandera = true;
-                }
-                lblCodme.setText(txtCodme.getText());
-                lblNombre.setText(lista.get(0).get(".nombre").toString().trim());
-                txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
-                lblEstadoSocio.setText(lista.get(0).get(".tipo").toString().trim());
-                cargarGrupoFamiliar(codme);
-            } else {
-                JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
+        fichaMedica();
+        String sql = "SELECT p.pre_id, p.codme, p.nombre, ISNULL(e.tipo, 'No inscripto') as tipo, ISNULL(i.estado, 0) as estado, ISNULL(i.fichamed, 0) as fichamed "
+                + "FROM prestadores p "
+                + "LEFT JOIN gym_med_inscripto i ON p.codme=i.codme "
+                + "LEFT JOIN gym_estados e ON i.estado=e.estado "
+                + "WHERE p.codme = ? AND p.codme <= 75000 AND p.tsocio <= ? AND p.entidad = ?";
+        ArrayList arraySocio = new ArrayList();
+        arraySocio.add(codme);
+        arraySocio.add(4);
+        arraySocio.add(0);
+        List<Map<String, Object>> lista = Reflection.getMapQueryResultByPreparedStatement(sql, arraySocio, connection5);
+        if (lista.size() > 0) {
+            int pre_id = Integer.valueOf(lista.get(0).get(".pre_id").toString());
+            if (deuda.tieneDeuda(pre_id, connection5)) {
+                JOptionPane.showMessageDialog(null, "SOCIO DEUDOR.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
             }
+            int estado = Integer.valueOf(lista.get(0).get(".estado").toString().trim());
+            fichaMed = Integer.valueOf(lista.get(0).get(".fichamed").toString().trim());
+            if (fichaMed == 1) {
+                rbSi.setSelected(true);
+            } else {
+                rbNo.setSelected(true);
+            }
+            if (estado == 1) {
+                bandera = false;
+            } else if (estado == 5) {
+                bandera = false;
+                JOptionPane.showMessageDialog(null, "ESTADO: " + lista.get(0).get(".tipo").toString().trim() + "", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                bandera = true;
+            }
+            lblCodme.setText(txtCodme.getText());
+            lblNombre.setText(lista.get(0).get(".nombre").toString().trim());
+            txtNombre.setText(lista.get(0).get(".nombre").toString().trim());
+            lblEstadoSocio.setText(lista.get(0).get(".tipo").toString().trim());
+            cargarGrupoFamiliar(codme);
         } else {
-            JOptionPane.showMessageDialog(null, "El socio posee deuda. Debe regularizar su situación en Dpto. Contaduría.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "El N° de socio ingresado no existe.", "Mensaje del sistema", JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     public void cargarGrupoFamiliar(int codme) throws SQLException {
         String sql = "SELECT A.numdoc as dni, p.pre_id,P.CODME,P.NOMBRE,RTRIM(LTRIM(A.NOMBRE)) as nombrea,A.SUBC,A.PAREN paren,p.numdoc,a.numdoc numdoca "
                 + "FROM club_ti C LEFT JOIN PRESTADORES P ON C.PRE_ID=P.PRE_ID "
-                + "LEFT JOIN CLUB_AD A ON C.PRE_ID=A.PRE_ID WHERE C.ESTADO=1 AND P.CODME = ? ORDER BY P.NOMBRE,a.subc";
+                + "LEFT JOIN CLUB_AD A ON C.PRE_ID=A.PRE_ID WHERE C.ESTADO=1 AND A.estado = 1 AND P.CODME = ? ORDER BY P.NOMBRE,a.subc";
         ArrayList arrayGrupoFamiliar = new ArrayList();
         arrayGrupoFamiliar.add(codme);
         List<Map<String, Object>> listaGrupoFamiliar = Reflection.getMapQueryResultByPreparedStatement(sql, arrayGrupoFamiliar, connection5);
@@ -517,33 +516,52 @@ public class DialogoAfiliados extends javax.swing.JDialog {
     }//GEN-LAST:event_tblGrupoFamiliarMouseClicked
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        fichaMedica();
-        if (!bandera) {
-            String update = "UPDATE gym_med_inscripto "
-                    + "SET fichamed = " + fichaMed + ""
-                    + "WHERE codme = " + txtCodme.getText() + "";
-            try {
-                connection5.createStatement().execute(update);
-                JOptionPane.showMessageDialog(null, "Datos modificados.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
-                cargarSocio();
-            } catch (SQLException ex) {
-                Logger.getLogger(DialogoAfiliados.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } else {
-            int resultado = JOptionPane.showConfirmDialog(null, "¿Desea inscribir al socio " + txtNombre.getText() + "?", "Confirmación", JOptionPane.OK_CANCEL_OPTION);
-            if (resultado == JOptionPane.OK_OPTION) {
-                try {
-                    String insert = "INSERT INTO gym_med_inscripto "
-                            + "VALUES (" + txtCodme.getText() + ", GETDATE(), 0, " + fichaMed + ", 0, 5)";
-                    connection5.createStatement().execute(insert);
-                    JOptionPane.showMessageDialog(null, "Médico inscripto.", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
-                    cargarSocio();
-                } catch (SQLException ex) {
-                    Logger.getLogger(DialogoAfiliados.class.getName()).log(Level.SEVERE, null, ex);
+        try {
+            int pre_id = 0;
+            int codme = Integer.valueOf(txtCodme.getText().toString());
+            fichaMedica();
+            String sql = "SELECT pre_id FROM prestadores "
+                    + "WHERE codme = ? AND codme <= 75000 AND tsocio <= 4 AND entidad = 0";
+            ArrayList arraySocio = new ArrayList();
+            arraySocio.add(codme);
+            List<Map<String, Object>> listaSocio = Reflection.getMapQueryResultByPreparedStatement(sql, arraySocio, connection5);
+            if (listaSocio.size() > 0) {
+                pre_id = Integer.valueOf(listaSocio.get(0).get(".pre_id").toString());
+                if (!deuda.tieneDeuda(pre_id, connection5)) {
+                    if (!bandera) {
+                        String update = "UPDATE gym_med_inscripto "
+                                + "SET fichamed = " + fichaMed + ""
+                                + "WHERE codme = " + txtCodme.getText() + "";
+                        try {
+                            connection5.createStatement().execute(update);
+                            JOptionPane.showMessageDialog(null, "Datos modificados.", "Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
+                            cargarSocio();
+                        } catch (SQLException ex) {
+                            Logger.getLogger(DialogoAfiliados.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        int resultado = JOptionPane.showConfirmDialog(null, "¿Desea inscribir al socio " + txtNombre.getText() + "?", "Confirmación", JOptionPane.OK_CANCEL_OPTION);
+                        if (resultado == JOptionPane.OK_OPTION) {
+                            try {
+                                String insert = "INSERT INTO gym_med_inscripto "
+                                        + "VALUES (" + txtCodme.getText() + ", GETDATE(), 0, " + fichaMed + ", 0, 1)";
+                                connection5.createStatement().execute(insert);
+                                JOptionPane.showMessageDialog(null, "Médico inscripto.", "Mensaje del sistema", JOptionPane.INFORMATION_MESSAGE);
+                                cargarSocio();
+                            } catch (SQLException ex) {
+                                Logger.getLogger(DialogoAfiliados.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        } else if (resultado == JOptionPane.CANCEL_OPTION) {
+                            JOptionPane.showMessageDialog(null, "Cancelado por el usuario.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null, "El socio que desea Inscribir presenta deuda.");
                 }
-            } else if (resultado == JOptionPane.CANCEL_OPTION) {
-                JOptionPane.showMessageDialog(null, "Cancelado por el usuario.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
             }
+
+        } catch (SQLException ex) {
+            Logger.getLogger(DialogoAfiliados.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }//GEN-LAST:event_btnGuardarActionPerformed

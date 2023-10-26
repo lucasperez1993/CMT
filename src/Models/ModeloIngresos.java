@@ -17,7 +17,7 @@ public class ModeloIngresos extends AbstractTableModel {
 
     public ModeloIngresos(final List<Map<String, Object>> array) {
         this.colnum = 3;
-        this.colNames = new String[]{"Nombre", "D.N.I", "Ingreso"};
+        this.colNames = new String[]{"Nombre", "D.N.I", "Hora"};
         this.registros = new ArrayList<Object[]>();
         try {
             for (final Map<String, Object> map : array) {
