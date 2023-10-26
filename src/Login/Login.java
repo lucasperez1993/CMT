@@ -41,6 +41,7 @@ public class Login extends javax.swing.JFrame {
             ps.setObject(2, txtClave.getText());
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                int idusuario = rs.getInt(1);
                 username = rs.getString(2);
                 user = rs.getString(3);
                 tipo = rs.getInt(5);
@@ -48,10 +49,10 @@ public class Login extends javax.swing.JFrame {
                 JSONObject jsonPermiso = new JSONObject(permisoJson);
                 this.dispose();
                 if(jdb_permiso.getPermisoPorDelegacion(jsonPermiso, Constante.PERMISO_ADMINISTRADOR_CMT, connection)){
-                    controlador.vistaAdmin(jsonPermiso, this, connection);
+                    controlador.vistaAdmin(idusuario, tipo, jsonPermiso, this, connection);
                 }
                 else if(jdb_permiso.getPermisoPorDelegacion(jsonPermiso, Constante.PERMISO_MDA_CMT, connection)){
-                    controlador.vistaDashboard(jsonPermiso);
+                    controlador.vistaDashboard(idusuario, tipo, jsonPermiso);
                 }
                 else if(jdb_permiso.getPermisoPorDelegacion(jsonPermiso, Constante.PERMISO_OS_CMT, connection)){
                     controlador.vistaDashboardOS(jsonPermiso, connection);

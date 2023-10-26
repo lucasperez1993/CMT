@@ -6,6 +6,7 @@ import Controller.VistaControlador;
 import Login.Login;
 import Models.ModeloMesa;
 import Models.SqlMesaDeAyuda;
+import cirugia.FormCirugia;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.sql.Connection;
@@ -41,6 +42,8 @@ public class Dashboard extends javax.swing.JFrame {
     public int codme;
     public int id_cargador;
     public Date javaDate;
+    private int idusuario;
+    private int tipoUsuario;
     public String user;
     public static boolean defaultColor;
     public boolean esFaltante;
@@ -61,8 +64,10 @@ public class Dashboard extends javax.swing.JFrame {
     JSONObject permisoJson;
     public boolean existe;
 
-    public Dashboard(JSONObject permisoJson) throws JSONException, ParseException {
+    public Dashboard(int idusuario, int tipoUsuario, JSONObject permisoJson) throws JSONException, ParseException {
         initComponents();
+        this.idusuario = idusuario;
+        this.tipoUsuario = tipoUsuario;
         btnDesbloquear.hide();
         btnEstado.hide();
         itemGuiamed.setEnabled(false);
@@ -79,7 +84,23 @@ public class Dashboard extends javax.swing.JFrame {
         lblCantidad.setVisible(false);
         btnAlta.setVisible(false);
     }
+    
+    public int getIdusuario() {
+        return idusuario;
+    }
 
+    public void setIdusuario(int idusuario) {
+        this.idusuario = idusuario;
+    }
+
+    public int getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(int tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+    
     private void habilitarBotones() throws JSONException, ParseException {
         btnCambioClave.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_MODIFICAR_CLAVE, connection));
         btnDelegaciones.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_DELEGACION, connection));
@@ -326,7 +347,6 @@ public class Dashboard extends javax.swing.JFrame {
 
     public void crearCarpetaMesa() {
         File directorio = new File("C:/Mesa de Ayuda/");
-        //File directorio = new File("Z:/PUREBA");
         try {
             if (!directorio.exists()) {
                 if (directorio.mkdirs()) {
@@ -391,6 +411,8 @@ public class Dashboard extends javax.swing.JFrame {
         itemComunicar = new javax.swing.JMenuItem();
         itemAltaCenmed = new javax.swing.JMenuItem();
         itemMigrarResumen = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Mesa de Ayuda Prestacional");
@@ -795,6 +817,18 @@ public class Dashboard extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
+        jMenu2.setText("Cirugias");
+
+        jMenuItem1.setText("Carga");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuBar1.add(jMenu2);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -975,7 +1009,7 @@ public class Dashboard extends javax.swing.JFrame {
         try {
             this.dispose();
             VistaControlador vista = new VistaControlador();
-            vista.vistaDashboard(permisoJson);
+            vista.vistaDashboard(idusuario, tipoUsuario, permisoJson);
         } catch (JSONException ex) {
             Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {
@@ -992,6 +1026,15 @@ public class Dashboard extends javax.swing.JFrame {
         Mail mail = new Mail();
         mail.sendMailIPSST(objetoCargador);
     }//GEN-LAST:event_btnSendIPSSTActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        try {
+            FormCirugia form = new FormCirugia(this, false, idusuario, tipoUsuario, connection);
+            form.setVisible(true);
+        } catch (ParseException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlta;
@@ -1026,7 +1069,9 @@ public class Dashboard extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

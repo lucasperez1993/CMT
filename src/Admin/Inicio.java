@@ -20,12 +20,16 @@ public class Inicio extends javax.swing.JFrame {
     VistaControlador controlador = new VistaControlador();
     Dashboard dashboard;
     public JSONObject permisoJson;
+    private int idususario;
+    private int tipoUsuario;
     
-    public Inicio(JSONObject permisoJson, Login login, Connection connection) {
+    public Inicio(int idususario, int tipoUsuario, JSONObject permisoJson, Login login, Connection connection) {
         this.connection = connection;
         this.login = login;
         this.permisoJson = permisoJson;
         initComponents();
+        this.idususario = idususario;
+        this.tipoUsuario = tipoUsuario;
         lblUser.setText(this.login.username);
     }
 
@@ -139,7 +143,7 @@ public class Inicio extends javax.swing.JFrame {
 
     private void btnMDAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMDAActionPerformed
         try {
-            controlador.vistaDashboard(this.permisoJson);
+            controlador.vistaDashboard(idususario, tipoUsuario, this.permisoJson);
         } catch (JSONException ex) {
             Logger.getLogger(Inicio.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ParseException ex) {

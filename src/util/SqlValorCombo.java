@@ -295,4 +295,28 @@ public class SqlValorCombo {
         }
         return lista;
     }
+    
+    public static List<Map<String, Object>> llenarComboUsusario(String sql, JComboBox combo, String campo, Connection connection) {
+        List<Map<String, Object>> lista = null;
+        try {
+            ArrayList arrayCombo = new ArrayList();
+            lista = Reflection.getMapQueryResultByPreparedStatement(sql, arrayCombo, connection);
+            if (lista.size() > 0) {
+                combo.removeAllItems();
+                for (int i = 0; i < lista.size(); ++i) {
+                    combo.addItem(lista.get(i).get("." + campo).toString().trim());
+                }
+            }
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(Dashboard.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            try {
+                connection.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(SqlValorCombo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return lista;
+    }
 }

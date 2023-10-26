@@ -595,7 +595,7 @@ public abstract class Reflection {
     }
     
     public static List<Map<String, Object>> getMapQueryResultByPreparedStatement(String sql, ArrayList<Object> listaDeFiltros, Connection con) throws SQLException{
-        con.commit();
+        //con.commit();
         PreparedStatement preparedStatement = con.prepareStatement(sql);
         if(listaDeFiltros.size() > 0){
             int indice = 1;

@@ -45,13 +45,13 @@ public class VistaControlador {
         login.setVisible(true);
     }
     
-    public void vistaAdmin(JSONObject permisJson, Login login, Connection connection){
-        Inicio inicio = new Inicio(permisJson, login, connection);
+    public void vistaAdmin(int idususario, int tipoUsuario, JSONObject permisJson, Login login, Connection connection){
+        Inicio inicio = new Inicio(idususario, tipoUsuario, permisJson, login, connection);
         inicio.setVisible(true);
     }
     
-    public void vistaDashboard(JSONObject permisJson) throws JSONException, ParseException{
-        Dashboard dashboard = new Dashboard(permisJson);
+    public void vistaDashboard(int idusuario, int tipoUsuario, JSONObject permisJson) throws JSONException, ParseException{
+        Dashboard dashboard = new Dashboard(idusuario, tipoUsuario, permisJson);
         dashboard.setVisible(true);
     }
     
