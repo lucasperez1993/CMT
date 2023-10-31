@@ -5,9 +5,11 @@
  */
 package cirugia;
 
+import Models.ModelAyudante;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,6 +27,7 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
     DialogoImagenPractica dialogoImagenPractica;
     int indice = 0;
     JSONObject practicaJson = null;
+    JSONArray arrayMatricula = new JSONArray();
 
     public DialogoPorcentajePractica(java.awt.Frame parent, boolean modal, DialogoImagenPractica dialogoImagenPractica, int indice) {
         super(parent, modal);
@@ -34,9 +37,18 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
             this.indice = indice;
             initComponents();
             cargarValore();
+            cargarTablaPracticaMedico();
         } catch (JSONException ex) {
             Logger.getLogger(DialogoPorcentajePractica.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public JTable getTablaPracticaMedico() {
+        return tablaPracticaMedico;
+    }
+
+    public void setTablaPracticaMedico(JTable tablaPracticaMedico) {
+        this.tablaPracticaMedico = tablaPracticaMedico;
     }
 
     /**
@@ -60,6 +72,9 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         cantidad = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaPracticaMedico = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -114,6 +129,29 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
 
         jLabel2.setText("Recargo");
 
+        jButton4.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
+        jButton4.setText("asociar ayudante");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        tablaPracticaMedico.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tablaPracticaMedico.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaPracticaMedicoMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tablaPracticaMedico);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -125,24 +163,27 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
                     .addComponent(labelNombre, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelCantidad, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(labelOptativaRequiere, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(144, 144, 144)
-                        .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton2)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 136, Short.MAX_VALUE)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(160, 160, 160)))
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(comboPorcentaje, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(160, 160, 160))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jButton4)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton2))))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -162,11 +203,15 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
                     .addComponent(jLabel1)
                     .addComponent(cantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -251,7 +296,8 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
             try {
                 dialogoImagenPractica.controlador.quitarPractica(indice);
                 dialogoImagenPractica.cargarTabla();
-            } catch (JSONException ex) {}
+            } catch (JSONException ex) {
+            }
         }
     }//GEN-LAST:event_jButton3ActionPerformed
 
@@ -270,18 +316,80 @@ public class DialogoPorcentajePractica extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    public void cargarTablaPracticaMedico() {
+        try {
+            arrayMatricula = practicaJson.getJSONArray("medicos");
+        } catch (JSONException ex) {
+        }
+        tablaPracticaMedico.setModel((new ModelAyudante(arrayMatricula)));
+    }
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        DialogoAsociarAyudante dialogo = new DialogoAsociarAyudante(parent, true, this, dialogoImagenPractica.controlador);
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void tablaPracticaMedicoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPracticaMedicoMouseClicked
+        if (evt.getClickCount() >= 2) {
+            int mensaje = JOptionPane.showConfirmDialog(null, "¿Desea modificar la practica?", "Mensaje de confirmación", JOptionPane.YES_NO_OPTION);
+            if (mensaje == JOptionPane.YES_OPTION) {
+                try {
+                    String practica = practicaJson.getString("practica");
+                    arrayMatricula.remove(tablaPracticaMedico.getSelectedRow());
+                    tablaPracticaMedico.setModel((new ModelAyudante(arrayMatricula)));
+                    dialogoImagenPractica.controlador.modificarPracticaMedicoGral(practica, arrayMatricula);
+                } catch (JSONException ex) {
+                    Logger.getLogger(DialogoPorcentajePractica.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+    }//GEN-LAST:event_tablaPracticaMedicoMouseClicked
+
+    public void agregarMedico(JSONObject json) {
+        try {
+            arrayMatricula = practicaJson.getJSONArray("medicos");
+        } catch (JSONException ex) {
+        }
+        boolean existe = false;
+        for (int indice = 0; indice < arrayMatricula.length(); indice++) {
+            try {
+                JSONObject compareJaon = arrayMatricula.getJSONObject(indice);
+                if (compareJaon.getInt("matricula") == json.getInt("matricula")) {
+                    existe = true;
+                    break;
+                }
+                //cirugia.ayudantejson = array.toString();
+            } catch (JSONException ex) {
+                Logger.getLogger(DialogoPorcentajePractica.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        if (!existe) {
+            try {
+                arrayMatricula.put(json);
+                String practica = practicaJson.getString("practica");
+                dialogoImagenPractica.controlador.modificarPracticaMedicoGral(practica, arrayMatricula);
+            } catch (JSONException ex) {
+                Logger.getLogger(DialogoPorcentajePractica.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        cargarTablaPracticaMedico();
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSpinner cantidad;
     private javax.swing.JComboBox<String> comboPorcentaje;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelCantidad;
     private javax.swing.JLabel labelNivel;
     private javax.swing.JLabel labelNombre;
     private javax.swing.JLabel labelOptativaRequiere;
+    private javax.swing.JTable tablaPracticaMedico;
     // End of variables declaration//GEN-END:variables
 }

@@ -123,7 +123,7 @@ public class SqlCirugia {
             if (lista.size() > 0) {
                 try {
                     int codme = Integer.valueOf(lista.get(0).get(".codme").toString());
-                    String nombre = lista.get(0).get(".nombre").toString();
+                    String nombre = lista.get(0).get(".nombre").toString().trim();
                     json.put("matricula", matricula).put("nombre", nombre).put("result", true).put("codme", codme);
                 } catch (Exception ex2) {
                 }

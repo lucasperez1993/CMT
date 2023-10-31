@@ -350,7 +350,7 @@ public class ControladorCirugia {
                 if(isCirujano){
                     cirugia.codme = json.getInt("codme");
                     jdb_cirugiapractica.modificarCirujano(cirugia, connection);
-                    form.getTxtNombreCirujano().setText(json.getString("nombre"));
+                    form.getTxtNombreCirujano().setText(json.getString("nombre").trim());
                     form.getLabelCodme().setText(json.get("codme").toString());
                     form.getLabelMatricula().setText(json.get("matricula").toString());
                     cargarCirugias(json.getInt("codme"));
@@ -414,6 +414,19 @@ public class ControladorCirugia {
         }
         cirugia.practicajson = array.toString();
         jdb_cirugiapractica.modificarPractica(cirugia, connection);
+    }
+    
+    public void modificarPracticaMedicoGral(String practica, JSONArray arrayMatricula) throws JSONException{
+        JSONArray array = new JSONArray(cirugia.practicajson);
+        for(int indice = 0; indice < array.length(); indice++){
+            if(array.getJSONObject(indice).getString("practica").equals(practica)){
+                array.getJSONObject(indice).put("medicos", arrayMatricula);
+                break;
+            }
+        }
+        cirugia.practicajson = array.toString();
+        jdb_cirugiapractica.modificarPractica(cirugia, connection);
+        cargarTablaCirugia(cirugia.afiliado);
     }
     
     public void cargarTablaAyudante() throws JSONException{
