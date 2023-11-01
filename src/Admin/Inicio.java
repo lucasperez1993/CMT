@@ -31,6 +31,7 @@ public class Inicio extends javax.swing.JFrame {
         this.idususario = idususario;
         this.tipoUsuario = tipoUsuario;
         lblUser.setText(this.login.username);
+        System.out.println("Funcionando");
     }
 
     @SuppressWarnings("unchecked")
