@@ -54,8 +54,6 @@ public class Dashboard extends javax.swing.JFrame {
     ControladorMesaAyuda controlador = null;
     VistaControlador vistaControlador = new VistaControlador();
     DialogoConsulta dialogoconsulta;
-//    Cambios cambios;
-//    CentroMedico cenmed;
     Dashboard dashboard;
     private FueraDeTermino fTermino;
     Login login;
@@ -84,23 +82,6 @@ public class Dashboard extends javax.swing.JFrame {
         lblCantidad.setVisible(false);
         btnAlta.setVisible(false);
     }
-    
-    public int getIdusuario() {
-        return idusuario;
-    }
-
-    public void setIdusuario(int idusuario) {
-        this.idusuario = idusuario;
-    }
-
-    public int getTipoUsuario() {
-        return tipoUsuario;
-    }
-
-    public void setTipoUsuario(int tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
-    }
-    
     private void habilitarBotones() throws JSONException, ParseException {
         btnCambioClave.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_MODIFICAR_CLAVE, connection));
         btnDelegaciones.setEnabled(jdb_permiso.getPermisoPorDelegacion(permisoJson, Constante.PERMISO_DELEGACION, connection));
@@ -977,6 +958,23 @@ public class Dashboard extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnAltaActionPerformed
 
+     public int getIdusuario() {
+        return idusuario;
+    }
+
+    public void setIdusuario(int idusuario) {
+        this.idusuario = idusuario;
+    }
+
+    public int getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(int tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+    
+    
     private void itemComunicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_itemComunicarActionPerformed
         vistaControlador.vistaFtermino(this, true, connection);
     }//GEN-LAST:event_itemComunicarActionPerformed
