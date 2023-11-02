@@ -23,8 +23,13 @@ public class ModelPractica extends AbstractTableModel {
     private ArrayList<Object[]> registros;
 
     public ModelPractica(JSONArray arrayMatricula) {
+<<<<<<< HEAD
         this.colnum = 10;
         this.colNames = new String[]{"Codigo", "Practica", "Cantidad", "Nivel", "Optativa", "(%)", "Req.AP","Capita", "C.Ayu","Ayudantes"};
+=======
+        this.colnum = 9;
+        this.colNames = new String[]{"Codigo", "Practica", "Cantidad", "Nivel", "Ayudante", "Optativa", "Porcentaje", "Req.AP","Capita"};
+>>>>>>> 35df7de (solucionando mocos del bicho)
         this.registros = new ArrayList<Object[]>();
         try {
             for (int indice = 0; indice < arrayMatricula.length(); indice++) {
@@ -34,11 +39,14 @@ public class ModelPractica extends AbstractTableModel {
                 String requiereAP = "";
                 String cantidad = "1";
                 String capita = "";
+<<<<<<< HEAD
                 String ayudantes = "";
                 try {
                     capita = map.get("capita").toString();
                 } catch (Exception e) {
                 }
+=======
+>>>>>>> 35df7de (solucionando mocos del bicho)
                 try {
                     capita = map.get("capita").toString();
                 } catch (Exception e) {
@@ -65,12 +73,20 @@ public class ModelPractica extends AbstractTableModel {
                     nombre,
                     cantidad,
                     map.get("nivel"),
+<<<<<<< HEAD
                     map.getBoolean("valor") ? "SI" : "NO",
                     porcentaje,
                     requiereAP,
                     capita,
                     map.get("ayudante"),
                     ayudantes
+=======
+                    map.get("ayudante"),
+                    map.getBoolean("valor") ? "SI" : "NO",
+                    porcentaje,
+                    requiereAP,
+                    capita
+>>>>>>> 35df7de (solucionando mocos del bicho)
                 };
                 this.registros.add(row);
             }

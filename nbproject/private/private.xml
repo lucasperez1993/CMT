@@ -3,7 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+<<<<<<< HEAD
             <file>file:/D:/sistemas/MESA%20DE%20AYUDA/CMT/src/objeto/MigraGrupoFamiliar.java</file>
+=======
+            <file>file:/D:/JAVA/CMT/src/MDA/Dashboard.java</file>
+            <file>file:/D:/JAVA/CMT/src/util/Deuda.java</file>
+            <file>file:/D:/JAVA/CMT/src/COLEGYM/DialogoAfiliados.java</file>
+            <file>file:/D:/JAVA/CMT/src/OS/DashboardOS.java</file>
+>>>>>>> 35df7de (solucionando mocos del bicho)
         </group>
     </open-files>
 </project-private>
