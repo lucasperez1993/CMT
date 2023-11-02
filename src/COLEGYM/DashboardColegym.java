@@ -88,12 +88,8 @@ public class DashboardColegym extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Ultimo pago: SIN REGISTRO. \n Vencimiento: SIN REGISTRO.","Mensaje del Sistema", JOptionPane.INFORMATION_MESSAGE);
         }
     }
-    
-<<<<<<< HEAD
+
     public void insertIngreso() throws SQLException, ParseException {
-=======
-    public void insertIngreso() throws SQLException {
->>>>>>> 35df7de (solucionando mocos del bicho)
         String numdoc = txtDNI.getText();
         if(deuda.tieneDeudaPorIngreso(Integer.valueOf(numdoc), connection5)){
             JOptionPane.showMessageDialog(null, "El Socio titular presenta DEUDA.", "Mensaje del Sistema", JOptionPane.ERROR_MESSAGE);
@@ -114,10 +110,7 @@ public class DashboardColegym extends javax.swing.JFrame {
             arrayExisteIngresoAdh.add(1);
             List<Map<String, Object>> lista2 = Reflection.getMapQueryResultByPreparedStatement(sql2, arrayExisteIngresoAdh, connection5);
             if (lista2.size() > 0) {
-<<<<<<< HEAD
                 getVencimiento(Integer.valueOf(txtDNI.getText()));
-=======
->>>>>>> 35df7de (solucionando mocos del bicho)
                 String insert = "INSERT INTO gym_ingresos "
                         + "VALUES (" + numdoc + ", GETDATE())";
                 connection5.createStatement().execute(insert);
@@ -383,11 +376,9 @@ public class DashboardColegym extends javax.swing.JFrame {
             }
         } catch (SQLException ex) {
             Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
-<<<<<<< HEAD
+
         } catch (ParseException ex) {
             Logger.getLogger(DashboardColegym.class.getName()).log(Level.SEVERE, null, ex);
-=======
->>>>>>> 35df7de (solucionando mocos del bicho)
         }
     }//GEN-LAST:event_btnMarcarActionPerformed
 
@@ -399,10 +390,7 @@ public class DashboardColegym extends javax.swing.JFrame {
                     txtDNI.requestFocus();
                 } else {
                     insertIngreso();
-<<<<<<< HEAD
-=======
                     getVencimiento(Integer.valueOf(txtDNI.getText()));
->>>>>>> 35df7de (solucionando mocos del bicho)
                     txtDNI.setText("");
                 }
             } catch (SQLException ex) {
